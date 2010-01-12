@@ -1,0 +1,11 @@
+single war file that can run in any servlet container.
+
+This gives you a pluggable clamshell for your modular (osgi based) application.
+Core Developers and Extension Developers get a branded interface to interact with and change (their) components.
+Nothing more, nothing less.
+
+Technical:
+In there there's a osgi container running.
+Standard shipping also includes management bundles like:
+- a simple remoting to manage the content of your "vault"
+
