@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ops4j.pax.vault</groupId>
+        <artifactId>vault-pom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../pom/</relativePath>
+    </parent>
+
+    <groupId>org.ops4j.pax.vault</groupId>
+    <artifactId>pax-vault-builder</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <name>OPS4J Pax Vault - Builder</name>
+
+    <properties>
+        <bundle.symbolicName>${namespace}.builder</bundle.symbolicName>
+        <bundle.namespace>${namespace}.builder</bundle.namespace>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.vault</groupId>
+            <artifactId>pax-vault-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-lang</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-io</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
