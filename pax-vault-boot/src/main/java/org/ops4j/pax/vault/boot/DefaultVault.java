@@ -44,15 +44,15 @@ public class DefaultVault implements Vault
 
     public void start()
     {
-        System.out.println( "LOAD.." );
         ClassLoader parent = null;
         try
         {
+            
             final Map<String, String> p = new HashMap<String, String>();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             FileUtils.delete( new File( folder ) );
             p.put( "org.osgi.framework.storage", folder );
-            // p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" );
+            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.vault.api;version=0.1.0.SNAPSHOT" );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
@@ -61,7 +61,6 @@ public class DefaultVault implements Vault
             FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
 
             m_framework = factory.newFramework( p );
-
             m_framework.init();
 
             BundleContext context = m_framework.getBundleContext();

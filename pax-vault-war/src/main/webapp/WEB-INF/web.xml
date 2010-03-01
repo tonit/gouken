@@ -4,29 +4,24 @@
          version="2.4">
 
     <display-name>Pax Vault</display-name>
-    <!--
-             There are three means to configure Wickets configuration mode and they are
-             tested in the order given.
-             1) A system property: -Dwicket.configuration
-             2) servlet specific <init-param>
-             3) context specific <context-param>
-             The value might be either "development" (reloading when templates change)
-             or "deployment". If no configuration is found, "development" is the default.
-       -->
 
-    <context-param>
-        <param-name>
-            wicket.configuration
-        </param-name>
-        <param-value>
-            deployment
-        </param-value>
-    </context-param>
-    
+    <!-- This goes right into the vault -->
+    <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>org.apache.felix.http.proxy.ProxyServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/vault/*</url-pattern>
+    </servlet-mapping>
+
     <listener>
         <listener-class>org.ops4j.pax.vault.web.VaultListener</listener-class>
     </listener>
-    
+
+    <!-- This is the out of vault administration -->
     <filter>
         <filter-name>org.ops4j.pax.vault</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>

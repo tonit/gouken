@@ -36,8 +36,10 @@
             <modules>
 	            <module>pax-vault-api</module>
                 <module>pax-vault-boot</module>
+				<module>pax-vault-builder</module>
 				<module>pax-vault-web</module>
                 <module>pax-vault-war</module>
+                <module>pax-vault-updatewatch</module>
             </modules>
         </profile>
         <profile>

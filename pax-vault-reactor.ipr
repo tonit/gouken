@@ -39,6 +39,10 @@
             <element id="library" level="project" name="Maven: org.ops4j.base:ops4j-base-io:1.2.2-SNAPSHOT" />
             <element id="library" level="project" name="Maven: org.ops4j.base:ops4j-base-monitors:1.2.2-SNAPSHOT" />
             <element id="library" level="project" name="Maven: com.google.collections:google-collections:1.0" />
+            <element id="library" level="project" name="Maven: org.apache.felix:org.apache.felix.http.proxy:2.0.4" />
+            <element id="archive" name="pax-vault-builder-0.1.0-SNAPSHOT.jar">
+              <element id="module-output" name="pax-vault-builder" />
+            </element>
           </element>
         </element>
       </root>
@@ -269,7 +273,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" filepath="$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-boot/pax-vault-boot.iml" filepath="$PROJECT_DIR$/pax-vault-boot/pax-vault-boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-vault-builder/pax-vault-builder.iml" filepath="$PROJECT_DIR$/pax-vault-builder/pax-vault-builder.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-reactor.iml" filepath="$PROJECT_DIR$/pax-vault-reactor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-vault-updatewatch/pax-vault-updatewatch.iml" filepath="$PROJECT_DIR$/pax-vault-updatewatch/pax-vault-updatewatch.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-war/pax-vault-war.iml" filepath="$PROJECT_DIR$/pax-vault-war/pax-vault-war.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-web/pax-vault-web.iml" filepath="$PROJECT_DIR$/pax-vault-web/pax-vault-web.iml" />
     </modules>
@@ -302,7 +308,7 @@
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="" />
+    <mapping directory="" vcs="svn" />
   </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="" />
@@ -524,6 +530,39 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.felix:org.apache.felix.http.proxy:2.0.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.http.proxy/2.0.4/org.apache.felix.http.proxy-2.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.http.proxy/2.0.4/org.apache.felix.http.proxy-2.0.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.http.proxy/2.0.4/org.apache.felix.http.proxy-2.0.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.felix:org.apache.felix.dependencymanager:2.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.dependencymanager/2.0.1/org.apache.felix.dependencymanager-2.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.dependencymanager/2.0.1/org.apache.felix.dependencymanager-2.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.dependencymanager/2.0.1/org.apache.felix.dependencymanager-2.0.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: commons-logging:commons-logging:1.1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
   </component>
