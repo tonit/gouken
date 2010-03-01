@@ -1,0 +1,6 @@
+mvn:org.apache.felix/org.apache.felix.dependencymanager/2.0.1
+mvn:org.apache.felix/org.apache.felix.dependencymanager.shell/2.0.1
+--profiles=compendium,log
+--keepOriginalUrls
+file:target/pax-vault-updatewatch-0.1.0-SNAPSHOT.jar@update
+file:/Users/tonit/devel/org.ops4j/swissbox/pax-swissbox-property/target/pax-swissbox-property-1.3.0-SNAPSHOT.jar
