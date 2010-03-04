@@ -34,18 +34,21 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-	            <module>pax-vault-api</module>
+                <module>pax-vault-api</module>
                 <module>pax-vault-boot</module>
-				<module>pax-vault-builder</module>
-				<module>pax-vault-web</module>
-                <module>pax-vault-war</module>
+                <!--
+                <module>pax-vault-builder</module>
+  <module>pax-vault-war</module>
                 <module>pax-vault-updatewatch</module>
+                          
+                -->
+                <module>pax-vault-web</module>
             </modules>
         </profile>
         <profile>
             <id>it</id>
             <modules>
-                <module>pax-vault-integrationtests</module>
+
             </modules>
         </profile>
     </profiles>

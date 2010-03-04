@@ -15,20 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot;
+package org.ops4j.pax.vault.boot.activity;
 
-import org.ops4j.pax.vault.api.Vault;
-import org.ops4j.pax.vault.api.VaultFactory;
+import org.ops4j.pax.vault.boot.Command;
 
 /**
  * @author Toni Menzel
- * @since Jan 12, 2010
+ * @since Mar 4, 2010
  */
-public class DefaultVaultFactory implements VaultFactory
+public class CompositeCommand implements Command
 {
 
-    public Vault newInstance()
+    private Command[] m_commands;
+
+    public CompositeCommand( Command... commands )
     {
-        return new DefaultVault();
+        m_commands = commands;
+    }
+
+    public void execute()
+    {
+        for( Command cmd : m_commands )
+        {
+            cmd.execute();
+        }
     }
 }

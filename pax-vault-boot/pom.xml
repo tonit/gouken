@@ -13,6 +13,7 @@
     <groupId>org.ops4j.pax.vault</groupId>
     <artifactId>pax-vault-boot</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
 
     <name>OPS4J Pax Vault - Boot</name>
 
@@ -21,15 +22,19 @@
         <bundle.namespace>${namespace}.boot</bundle.namespace>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.vault</groupId>
-            <artifactId>pax-vault-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.base</groupId>
@@ -45,6 +50,34 @@
             <groupId>commons-discovery</groupId>
             <artifactId>commons-discovery</artifactId>
             <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>2.0.4</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.akuma</groupId>
+            <artifactId>akuma</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>compile</scope>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.9</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>3.0.9</version>
         </dependency>
         <dependency>
             <groupId>com.google.collections</groupId>

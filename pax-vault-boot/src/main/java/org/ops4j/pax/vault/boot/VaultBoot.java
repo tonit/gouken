@@ -25,34 +25,69 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.vault.api.Vault;
 
 /**
  * @author Toni Menzel
- * @since Jan 12, 2010
+ * @since Mar 4, 2010
  */
-public class DefaultVault implements Vault
+public class VaultBoot
 {
 
+    private static Log LOG = LogFactory.getLog( VaultBoot.class );
+
+    private static final String WORK = "work";
+
+    private final File m_folder;
     private Framework m_framework;
-    private String[] m_bundles = new String[0];
-    private Log LOG = LogFactory.getLog( DefaultVault.class );
+
+    public VaultBoot( File base, String folder )
+    {
+        m_folder = new File( base, folder );
+    }
+
+    public void init()
+    {
+        LOG.info( "Initializing at workdir " + m_folder.getAbsolutePath() );
+        if( m_folder.exists() )
+        {
+            if( !getWorkDir().exists() )
+            {
+                // fine !
+            }
+            else
+            {
+                throw new RuntimeException( "Locked!" );
+            }
+        }
+        else
+        {
+            throw new RuntimeException( "Workdir " + m_folder.getAbsolutePath() + " does not exist." );
+
+        }
+    }
+
+    private File getWorkDir()
+    {
+        return new File( m_folder, WORK );
+    }
 
     public void start()
     {
+        // foo
+        getWorkDir().mkdirs();
+
         ClassLoader parent = null;
         try
         {
-            
             final Map<String, String> p = new HashMap<String, String>();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
-            FileUtils.delete( new File( folder ) );
-            p.put( "org.osgi.framework.storage", folder );
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.vault.api;version=0.1.0.SNAPSHOT" );
+            File worker = new File( getWorkDir(), ".osgi" );
+            FileUtils.delete( worker );
+            p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
+            //p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
@@ -61,16 +96,17 @@ public class DefaultVault implements Vault
             FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
 
             m_framework = factory.newFramework( p );
+
             m_framework.init();
+            LOG.info( "Initialized OSGi container." );
 
             BundleContext context = m_framework.getBundleContext();
-            for( String bundle : m_bundles )
+            // load from folder
+            // for( String bundle : m_bundles )
             {
-                Bundle b = context.installBundle( bundle );
+                //   Bundle b = context.installBundle( bundle );
             }
             m_framework.start();
-            LOG.debug( "Started: " + m_framework.getSymbolicName() );
-
             for( Bundle b : m_framework.getBundleContext().getBundles() )
             {
                 b.start();
@@ -90,24 +126,4 @@ public class DefaultVault implements Vault
         }
     }
 
-    public int state()
-    {
-        return 0;
-    }
-
-    public void stop()
-    {
-        try
-        {
-            m_framework.stop();
-
-            m_framework.waitForStop( 1000 );
-        } catch( BundleException e )
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch( InterruptedException e )
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
 }
