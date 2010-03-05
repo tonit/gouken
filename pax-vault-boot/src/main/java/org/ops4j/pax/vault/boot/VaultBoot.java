@@ -18,6 +18,13 @@
 package org.ops4j.pax.vault.boot;
 
 import java.io.File;
+import java.rmi.ConnectException;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
@@ -25,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.io.FileUtils;
@@ -33,19 +41,20 @@ import org.ops4j.io.FileUtils;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class VaultBoot
+public class VaultBoot implements Vault
 {
 
     private static Log LOG = LogFactory.getLog( VaultBoot.class );
 
-    private static final String WORK = "work";
+    private static final String WORK = ".gouken";
 
     private final File m_folder;
     private Framework m_framework;
+    private Registry m_registry;
 
-    public VaultBoot( File base, String folder )
+    public VaultBoot( File base )
     {
-        m_folder = new File( base, folder );
+        m_folder = base;
     }
 
     public void init()
@@ -74,6 +83,32 @@ public class VaultBoot
         return new File( m_folder, WORK );
     }
 
+    public void stop()
+        throws RemoteException
+    {
+        try
+        {
+            LOG.info( "Stop hook triggered." );
+            m_framework.getBundleContext().getBundle( 0 ).stop();
+            m_registry.unbind( Vault.class.getName() );
+            UnicastRemoteObject.unexportObject( this, true );
+            UnicastRemoteObject.unexportObject( m_registry, true );
+            m_registry = null;
+            m_framework = null;
+            FileUtils.delete( getWorkDir() );
+            System.gc();
+
+
+        } catch( BundleException e )
+        {
+            LOG.error( "Problem stopping framework.", e );
+        } catch( NotBoundException e )
+        {
+            LOG.error( "Problem stopping framework.", e );
+        }
+
+    }
+
     public void start()
     {
         // foo
@@ -83,21 +118,21 @@ public class VaultBoot
         try
         {
             final Map<String, String> p = new HashMap<String, String>();
-            String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
-            File worker = new File( getWorkDir(), ".osgi" );
+            File worker = new File( getWorkDir(), "framework" );
             FileUtils.delete( worker );
             p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
             //p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader( null );
+            //    Thread.currentThread().setContextClassLoader( null );
 
             FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
 
             m_framework = factory.newFramework( p );
 
             m_framework.init();
+            bind();
             LOG.info( "Initialized OSGi container." );
 
             BundleContext context = m_framework.getBundleContext();
@@ -116,6 +151,7 @@ public class VaultBoot
         } catch( Exception e )
         {
             e.printStackTrace();
+            tryShutdown();
         } finally
         {
             if( parent != null )
@@ -125,5 +161,50 @@ public class VaultBoot
             }
         }
     }
+
+    private void tryShutdown()
+    {
+        if( m_framework != null )
+        {
+            try
+            {
+                m_framework.stop();
+
+            } catch( Exception e )
+            {
+                // dont care.
+            }
+        }
+    }
+
+    private void bind()
+    {
+        try
+        {
+            // try to find port from property
+            int port = getPort();
+            LOG.debug( "Starting up RMI registry on port [" + port + "]" );
+            m_registry = LocateRegistry.createRegistry( port );
+            LOG.debug( "Binding " + m_framework.getClass() + " to RMI registry" );
+            m_registry.bind(
+                Vault.class.getName(),
+                UnicastRemoteObject.exportObject(
+                    (Vault) this,
+                    port
+                )
+            );
+            LOG.info( "RMI registry started on port [" + port + "]" );
+        }
+        catch( Exception e )
+        {
+            throw new RuntimeException( "Cannot setup RMI registry", e );
+        }
+    }
+
+    private int getPort()
+    {
+        return 1412;
+    }
+
 
 }

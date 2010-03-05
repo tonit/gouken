@@ -34,19 +34,26 @@ public class StartCommand implements Command
 {
 
     private static Log LOG = LogFactory.getLog( Main.class );
+    private Map<String, String> m_map;
+    private static final String DEFAULT_TARGET = ".gouken";
 
     public StartCommand( Map<String, String> map )
     {
-
+        m_map = map;
     }
 
     public void execute()
     {
-        File base = new File( "." ).getAbsoluteFile();
+        String t = m_map.get( "--target" );
+        if( t == null )
+        {
+            t = ".";
+        }
+        File base = new File( t ).getAbsoluteFile();
         try
         {
             // root folder must be given:
-            VaultBoot boot = new VaultBoot( base, "" );
+            VaultBoot boot = new VaultBoot( base );
             boot.init();
             boot.start();
         } catch( Throwable e )

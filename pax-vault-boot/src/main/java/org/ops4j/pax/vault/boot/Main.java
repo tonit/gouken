@@ -43,28 +43,22 @@ public class Main
 
     private static Log LOG = LogFactory.getLog( Main.class );
 
-    /**
-     * Usually you want to make a framework:
-     * 1. run
-     * 2. shutdown
-     * 3. re-start
-     *
-     * @param args
-     */
     public static void main( String[] args )
         throws Exception
     {
         new Main().mapCommand( args ).execute();
     }
 
-    private void eval( String[] args )
-    {
-
-        {
-
-        }
-    }
-
+    /**
+     * Usually you want to make a framework:
+     * 1. run
+     * 2. shutdown
+     * 3. re-start
+     *
+     * @param args commandline arguments
+     *
+     * @return a command
+     */
     public Command mapCommand( String[] args )
     {
         Map<String, String> map = new HashMap<String, String>();
@@ -86,13 +80,11 @@ public class Main
         else if( map.containsKey( "status" ) )
         {
             return new StatusCommand( map );
-
         }
         else
         {
             return new UnknownCommand( map );
         }
-
     }
 
     private static void mapArgs( String[] args, Map<String, String> map )
@@ -115,37 +107,5 @@ public class Main
                 }
             }
         }
-    }
-
-    private static void buildContent( JFrame aFrame )
-    {
-        JPanel panel = new JPanel();
-
-        panel.add( new JLabel( "Hello" ) );
-
-        JButton ok = new JButton( "OK" );
-        ok.addActionListener( new ShowDialog( aFrame ) );
-        panel.add( ok );
-
-        aFrame.getContentPane().add( panel );
-    }
-
-    private static final class ShowDialog implements ActionListener
-    {
-
-        /**
-         * Defining the dialog's owner JFrame is highly recommended.
-         */
-        ShowDialog( JFrame aFrame )
-        {
-            fFrame = aFrame;
-        }
-
-        public void actionPerformed( ActionEvent aEvent )
-        {
-            JOptionPane.showMessageDialog( fFrame, "This is a dialog" );
-        }
-
-        private JFrame fFrame;
     }
 }
