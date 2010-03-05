@@ -62,26 +62,5 @@ public class StartCommand implements Command
         }
     }
 
-    private void daemonize()
-        throws Exception
-    {
-        Daemon d = new Daemon();
-        if( d.isDaemonized() )
-        {
-            // perform initialization as a daemon
-            // this involves in closing file descriptors, recording PIDs, etc.
-            d.init();
-
-        }
-        else
-        {
-            // if you are already daemonized, no point in daemonizing yourself again,
-            // so do this only when you aren't daemonizing.
-            d.daemonize();
-            // exit parent (real stuff is forked)
-            System.exit( 0 );
-        }
-
-        LOG.info( "Vault STARTER" );
-    }
+    
 }

@@ -30,4 +30,8 @@ public interface Vault extends Remote
     void stop()
         throws
         RemoteException;
+
+    String status()
+        throws
+        RemoteException;
 }

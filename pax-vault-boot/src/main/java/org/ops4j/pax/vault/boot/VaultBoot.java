@@ -27,6 +27,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import com.sun.akuma.Daemon;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,28 +55,50 @@ public class VaultBoot implements Vault
 
     public VaultBoot( File base )
     {
-        m_folder = base;
+        m_folder = base.getAbsoluteFile();
     }
 
     public void init()
+        throws Exception
     {
-        LOG.info( "Initializing at workdir " + m_folder.getAbsolutePath() );
-        if( m_folder.exists() )
+
+        Daemon d = new Daemon();
+        if( d.isDaemonized() )
         {
-            if( !getWorkDir().exists() )
+            // perform initialization as a daemon
+            // this involves in closing file descriptors, recording PIDs, etc.
+            LOG.info( "Vault STARTER" );
+
+            LOG.info( "Initializing at workdir " + m_folder.getAbsolutePath() );
+            if( m_folder.exists() )
             {
-                // fine !
+                if( !getWorkDir().exists() )
+                {
+                    // fine !
+                }
+                else
+                {
+                    throw new RuntimeException( "Locked!" );
+                }
             }
             else
             {
-                throw new RuntimeException( "Locked!" );
+                throw new RuntimeException( "Workdir " + m_folder.getAbsolutePath() + " does not exist." );
+
             }
+            d.init();
+
         }
         else
         {
-            throw new RuntimeException( "Workdir " + m_folder.getAbsolutePath() + " does not exist." );
-
+            // if you are already daemonized, no point in daemonizing yourself again,
+            // so do this only when you aren't daemonizing.
+            d.daemonize();
+            // exit parent (real stuff is forked)
+            System.exit( 0 );
         }
+
+
     }
 
     private File getWorkDir()
@@ -107,6 +130,21 @@ public class VaultBoot implements Vault
             LOG.error( "Problem stopping framework.", e );
         }
 
+    }
+
+    public String status()
+        throws RemoteException
+    {
+
+        if( m_framework == null )
+        {
+            return "Framework is not running. (instance is null).";
+
+        }
+        else
+        {
+            return "Framework is running.";
+        }
     }
 
     public void start()
@@ -160,6 +198,12 @@ public class VaultBoot implements Vault
 
             }
         }
+    }
+
+    private void daemonize()
+        throws Exception
+    {
+
     }
 
     private void tryShutdown()

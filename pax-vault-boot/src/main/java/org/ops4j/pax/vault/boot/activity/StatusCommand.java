@@ -18,7 +18,10 @@
 package org.ops4j.pax.vault.boot.activity;
 
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.vault.boot.Command;
+import org.ops4j.pax.vault.boot.Main;
 
 /**
  * @author Toni Menzel
@@ -27,12 +30,22 @@ import org.ops4j.pax.vault.boot.Command;
 public class StatusCommand implements Command
 {
 
+    private static Log LOG = LogFactory.getLog( Main.class );
+
     public StatusCommand( Map<String, String> map )
     {
     }
 
     public void execute()
     {
+        try
+        {
+            LOG.info( "Framework Status: " + new RemoteCommand().getRbc().status() );
+        } catch( Exception e )
+        {
+            LOG.info( "Framework is offline." );
 
+        }
     }
+
 }
