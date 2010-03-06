@@ -19,11 +19,11 @@ package org.ops4j.pax.vault.boot.activity;
 
 import java.io.File;
 import java.util.Map;
-import com.sun.akuma.Daemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.vault.boot.Command;
 import org.ops4j.pax.vault.boot.Main;
+import org.ops4j.pax.vault.boot.TDaemon;
 import org.ops4j.pax.vault.boot.VaultBoot;
 
 /**
@@ -44,16 +44,17 @@ public class StartCommand implements Command
 
     public void execute()
     {
-        String t = m_map.get( "--target" );
-        if( t == null )
-        {
-            t = ".";
-        }
-        File base = new File( t ).getAbsoluteFile();
+
         try
         {
+            boolean daemonize = true;
             // root folder must be given:
-            VaultBoot boot = new VaultBoot( base );
+            String daem = m_map.get( "--daemon" );
+            if( daem != null && daem.equals( "false" ) )
+            {
+                daemonize = false;
+            }
+            VaultBoot boot = new VaultBoot( new TDaemon( daemonize ), m_map );
             boot.init();
             boot.start();
         } catch( Throwable e )
@@ -62,5 +63,5 @@ public class StartCommand implements Command
         }
     }
 
-    
+
 }

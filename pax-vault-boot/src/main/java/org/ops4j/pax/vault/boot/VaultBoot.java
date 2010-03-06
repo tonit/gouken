@@ -52,9 +52,17 @@ public class VaultBoot implements Vault
     private final File m_folder;
     private Framework m_framework;
     private Registry m_registry;
+    private TDaemon m_daemon;
 
-    public VaultBoot( File base )
+    public VaultBoot( TDaemon d, Map<String, String> map )
     {
+        String t = map.get( "--target" );
+        if( t == null )
+        {
+            t = ".";
+        }
+        File base = new File( t ).getAbsoluteFile();
+        m_daemon = d;
         m_folder = base.getAbsoluteFile();
     }
 
@@ -62,14 +70,11 @@ public class VaultBoot implements Vault
         throws Exception
     {
 
-        Daemon d = new Daemon();
-        if( d.isDaemonized() )
+        if( m_daemon.isDaemonized() )
         {
             // perform initialization as a daemon
             // this involves in closing file descriptors, recording PIDs, etc.
-            LOG.info( "Vault STARTER" );
-
-            LOG.info( "Initializing at workdir " + m_folder.getAbsolutePath() );
+            LOG.info( "New vault instance at " + m_folder.getAbsolutePath() );
             if( m_folder.exists() )
             {
                 if( !getWorkDir().exists() )
@@ -78,7 +83,7 @@ public class VaultBoot implements Vault
                 }
                 else
                 {
-                    throw new RuntimeException( "Locked!" );
+                    throw new RuntimeException( "Vault is locked!" );
                 }
             }
             else
@@ -86,14 +91,14 @@ public class VaultBoot implements Vault
                 throw new RuntimeException( "Workdir " + m_folder.getAbsolutePath() + " does not exist." );
 
             }
-            d.init();
+            m_daemon.init();
 
         }
         else
         {
             // if you are already daemonized, no point in daemonizing yourself again,
             // so do this only when you aren't daemonizing.
-            d.daemonize();
+            m_daemon.daemonize();
             // exit parent (real stuff is forked)
             System.exit( 0 );
         }
@@ -127,7 +132,7 @@ public class VaultBoot implements Vault
             LOG.error( "Problem stopping framework.", e );
         } catch( NotBoundException e )
         {
-            LOG.error( "Problem stopping framework.", e );
+            //LOG.error( "Problem stopping framework.", e );
         }
 
     }

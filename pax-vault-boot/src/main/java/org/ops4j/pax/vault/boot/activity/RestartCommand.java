@@ -17,27 +17,46 @@
  */
 package org.ops4j.pax.vault.boot.activity;
 
+import java.rmi.RemoteException;
+import java.util.Map;
+import com.sun.akuma.Daemon;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.vault.boot.Command;
 
 /**
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class CompositeCommand implements Command
+public class RestartCommand implements Command
 {
 
-    private Command[] m_commands;
+    private static Log LOG = LogFactory.getLog( RestartCommand.class );
+    private StartCommand m_start;
+    private StopCommand m_stop;
 
-    public CompositeCommand( Command... commands )
+    public RestartCommand( StartCommand start, StopCommand stop )
     {
-        m_commands = commands;
+        m_start = start;
+        m_stop = stop;
+
     }
 
     public void execute()
     {
-        for( Command cmd : m_commands )
+        Daemon d = new Daemon();
+        if( !d.isDaemonized() )
         {
-            cmd.execute();
+            m_stop.execute();
+        }
+
+        try
+        {
+
+            m_start.execute();
+        } catch( Exception e )
+        {
+            LOG.info( "Framework is already stopped." );
         }
     }
 }

@@ -17,11 +17,10 @@
  */
 package org.ops4j.pax.vault.boot.activity;
 
-import java.rmi.RemoteException;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.vault.boot.Command;
+import org.ops4j.pax.vault.boot.Vault;
 
 /**
  * @author Toni Menzel
@@ -32,7 +31,7 @@ public class StopCommand implements Command
 
     private static Log LOG = LogFactory.getLog( StopCommand.class );
 
-    public StopCommand( Map<String, String> map )
+    public StopCommand()
     {
     }
 
@@ -40,11 +39,13 @@ public class StopCommand implements Command
     {
         try
         {
-            new RemoteCommand().getRbc().stop();
+            Vault vault = new RemoteCommand().getRbc();
+
+            vault.stop();
             LOG.info( "Stopped." );
-        } catch( RemoteException e )
+        } catch( Exception e )
         {
-            e.printStackTrace();
+            LOG.info( "Framework is already stopped." );
         }
 
     }

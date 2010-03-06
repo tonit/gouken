@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.vault.boot;
 
+import java.util.Map;
+
 /**
  * @author Toni Menzel
  * @since Mar 4, 2010

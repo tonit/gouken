@@ -17,18 +17,13 @@
  */
 package org.ops4j.pax.vault.boot;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import com.sun.akuma.Daemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.vault.boot.activity.CompositeCommand;
+import org.ops4j.pax.vault.boot.activity.RestartCommand;
+import org.ops4j.pax.vault.boot.activity.RemoteCommand;
 import org.ops4j.pax.vault.boot.activity.StartCommand;
 import org.ops4j.pax.vault.boot.activity.StatusCommand;
 import org.ops4j.pax.vault.boot.activity.StopCommand;
@@ -47,6 +42,7 @@ public class Main
         throws Exception
     {
         new Main().mapCommand( args ).execute();
+
     }
 
     /**
@@ -69,12 +65,12 @@ public class Main
         }
         else if( map.containsKey( "stop" ) )
         {
-            return new StopCommand( map );
+            return new StopCommand();
 
         }
         else if( map.containsKey( "restart" ) )
         {
-            return new CompositeCommand( new StopCommand( map ), new StartCommand( map ) );
+            return new RestartCommand( new StartCommand( map ), new StopCommand() );
 
         }
         else if( map.containsKey( "status" ) )
