@@ -74,7 +74,7 @@ public class VaultBoot implements Vault
         {
             // perform initialization as a daemon
             // this involves in closing file descriptors, recording PIDs, etc.
-            LOG.info( "New vault instance at " + m_folder.getAbsolutePath() );
+            LOG.info( "Starting vault: " + m_folder.getAbsolutePath() );
             if( m_folder.exists() )
             {
                 if( !getWorkDir().exists() )

@@ -87,7 +87,7 @@ public class Main
     {
         for( String s : args )
         {
-            if( s != null && !s.isEmpty() )
+            if( s != null && s.length() > 0 )
             {
                 int eq = s.indexOf( "=" );
                 if( eq < 0 )
