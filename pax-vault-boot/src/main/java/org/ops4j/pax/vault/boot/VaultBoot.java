@@ -18,6 +18,7 @@
 package org.ops4j.pax.vault.boot;
 
 import java.io.File;
+import java.io.InputStream;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -27,6 +28,9 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import com.sun.akuma.Daemon;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
@@ -177,13 +181,23 @@ public class VaultBoot implements Vault
             m_framework.init();
             bind();
             LOG.info( "Initialized OSGi container." );
-
             BundleContext context = m_framework.getBundleContext();
-            // load from folder
-            // for( String bundle : m_bundles )
+            Properties desc = new Properties();
+            LOG.info( "Loading initial provisioning descriptor.." );
+
+            desc.load( getClass().getResourceAsStream( "/META-INF/gouken/provisioning.properties" ) );
+            String cp = (String) desc.getProperty( "bundles" );
+            LOG.info( "found info: " + cp );
+
+            for( String s : cp.split( "," ) )
             {
-                //   Bundle b = context.installBundle( bundle );
+                if( s != null && !s.equals( "." ) )
+                {
+                    LOG.info( "+ " + s );
+                    Bundle b = context.installBundle( s, getClass().getResourceAsStream( "/META-INF/gouken/" + s ) );
+                }
             }
+
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )
             {

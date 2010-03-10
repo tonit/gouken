@@ -20,6 +20,8 @@ package org.ops4j.pax.vault.boot;
 import java.io.IOException;
 import com.sun.akuma.Daemon;
 import com.sun.akuma.JavaVMArguments;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Toni Menzel
@@ -28,10 +30,15 @@ import com.sun.akuma.JavaVMArguments;
 public class TDaemon extends Daemon
 {
 
+    private static Log LOG = LogFactory.getLog( TDaemon.class );
+
+    private boolean m_daemonizeEnabled;
+
     public TDaemon( boolean daemonizeEnabled )
     {
         super();
         m_daemonizeEnabled = daemonizeEnabled;
+        LOG.info( "TDaemon set to " + m_daemonizeEnabled );
     }
 
     @Override
@@ -65,5 +72,16 @@ public class TDaemon extends Daemon
         }
     }
 
-    private boolean m_daemonizeEnabled;
+    @Override
+    public boolean isDaemonized()
+    {
+        if( m_daemonizeEnabled )
+        {
+            return super.isDaemonized();
+        }
+        else
+        {
+            return true;
+        }
+    }
 }

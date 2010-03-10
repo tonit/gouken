@@ -44,6 +44,7 @@ public class StatusCommand implements Command
         } catch( Exception e )
         {
             LOG.info( "Framework is offline." );
+            LOG.warn( e );
 
         }
     }

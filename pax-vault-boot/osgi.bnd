@@ -9,10 +9,11 @@ Export-Package:
 Import-Package: !*
 
 Private-Package:\
-  ${bundle.namespace}.*
+  ${bundle.namespace}.*,\
+  META-INF.gouken.*
 
 Embed-Dependency:\
-  *;scope=compile|runtime;inline=true
-
+  *;scope=compile;inline=true
+  
 Main-Class: ${bundle.symbolicName}.Main
 

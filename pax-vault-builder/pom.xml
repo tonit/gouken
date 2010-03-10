@@ -13,45 +13,45 @@
     <groupId>org.ops4j.pax.vault</groupId>
     <artifactId>pax-vault-builder</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
 
-    <name>OPS4J Pax Vault - Builder</name>
+    <name>OPS4J Pax Vault - Builder Plugin</name>
 
     <properties>
-        <bundle.symbolicName>${namespace}.builder</bundle.symbolicName>
-        <bundle.namespace>${namespace}.builder</bundle.namespace>
+      
     </properties>
 
-    <dependencies>
+   <dependencies>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.vault</groupId>
-            <artifactId>pax-vault-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.sf.kxml</groupId>
+            <artifactId>kxml2</artifactId>
+            <version>2.2.2</version>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-lang</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>2.0.7</version>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-io</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.7</version>
         </dependency>
         <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>0.4</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>2.0.7</version>
         </dependency>
         <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0.7</version>
         </dependency>
-
     </dependencies>
 
 </project>

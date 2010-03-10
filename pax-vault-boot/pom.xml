@@ -20,6 +20,7 @@
     <properties>
         <bundle.symbolicName>${namespace}.boot</bundle.symbolicName>
         <bundle.namespace>${namespace}.boot</bundle.namespace>
+        <dependency.ace.version>0.8.0-SNAPSHOT</dependency.ace.version>
     </properties>
 
     <build>
@@ -27,6 +28,29 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pax-vault-builder</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <!--
+                    <settings>
+                    </settings>
+                    -->
+                    <!--
+                              <configOutput>b1</configOutput>
+                    -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -55,7 +79,6 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
             <version>2.0.4</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.akuma</groupId>
@@ -72,7 +95,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.9</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -80,9 +102,131 @@
             <version>3.0.9</version>
         </dependency>
         <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.shell</artifactId>
+            <version>1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.shell.remote</artifactId>
+            <version>1.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ace gateway specifics -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.eventadmin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.dependencymanager</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.deploymentadmin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-consolelogger</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-log-listener</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-gateway-log</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-gateway-log-store</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-log</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-discovery-property</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-identification-property</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-scheduler</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-configurator</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-deployment</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ace</groupId>
+            <artifactId>ace-deployment-task</artifactId>
+            <version>${dependency.ace.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

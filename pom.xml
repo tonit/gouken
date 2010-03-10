@@ -34,6 +34,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>pax-vault-builder</module>
+
                 <module>pax-vault-api</module>
                 <module>pax-vault-boot</module>
                 <!--
