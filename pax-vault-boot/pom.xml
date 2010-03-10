@@ -102,6 +102,12 @@
             <version>3.0.9</version>
         </dependency>
         <dependency>
+            <artifactId>gouken-configurator</artifactId>
+            <groupId>com.okidokiteam.gouken</groupId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.shell</artifactId>
             <version>1.4.0</version>
@@ -207,13 +213,14 @@
             <version>${dependency.ace.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <!--
         <dependency>
             <groupId>org.apache.ace</groupId>
             <artifactId>ace-configurator</artifactId>
             <version>${dependency.ace.version}</version>
             <scope>provided</scope>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.apache.ace</groupId>

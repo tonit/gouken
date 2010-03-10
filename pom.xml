@@ -24,6 +24,9 @@
     <groupId>org.ops4j.pax.vault</groupId>
     <artifactId>pax-vault-reactor</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+    <modules>
+        <module>gouken-configurator</module>
+    </modules>
     <packaging>pom</packaging>
     <name>OPS4J Pax Vault - Reactor</name>
 

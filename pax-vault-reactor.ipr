@@ -274,6 +274,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/gouken-configurator/gouken-configurator.iml" filepath="$PROJECT_DIR$/gouken-configurator/gouken-configurator.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" filepath="$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" filepath="$PROJECT_DIR$/pax-vault-api/pax-vault-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-vault-boot/pax-vault-boot.iml" filepath="$PROJECT_DIR$/pax-vault-boot/pax-vault-boot.iml" />

@@ -1,0 +1,12 @@
+Bundle-Activator: com.okidokiteam.gouken.config.Activator
+
+Bundle-Version>:\
+  ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}
+
+Export-Package:
+
+Private-Package: com.okidokiteam.gouken.config
+
