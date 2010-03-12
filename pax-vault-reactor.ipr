@@ -638,17 +638,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.felix:org.apache.felix.configadmin:1.2.4">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.4/org.apache.felix.configadmin-1.2.4.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.4/org.apache.felix.configadmin-1.2.4-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.4/org.apache.felix.configadmin-1.2.4-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.felix:org.apache.felix.eventadmin:1.0.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.eventadmin/1.0.0/org.apache.felix.eventadmin-1.0.0.jar!/" />
@@ -781,17 +770,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-discovery-property/0.8.0-SNAPSHOT/ace-discovery-property-0.8.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.ace:ace-identification-property:0.8.0-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-property/0.8.0-SNAPSHOT/ace-identification-property-0.8.0-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-property/0.8.0-SNAPSHOT/ace-identification-property-0.8.0-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-property/0.8.0-SNAPSHOT/ace-identification-property-0.8.0-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.ace:ace-scheduler:0.8.0-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-scheduler/0.8.0-SNAPSHOT/ace-scheduler-0.8.0-SNAPSHOT.jar!/" />
@@ -801,17 +779,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-scheduler/0.8.0-SNAPSHOT/ace-scheduler-0.8.0-SNAPSHOT-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.apache.ace:ace-configurator:0.8.0-SNAPSHOT">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-configurator/0.8.0-SNAPSHOT/ace-configurator-0.8.0-SNAPSHOT.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-configurator/0.8.0-SNAPSHOT/ace-configurator-0.8.0-SNAPSHOT-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-configurator/0.8.0-SNAPSHOT/ace-configurator-0.8.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.apache.ace:ace-deployment:0.8.0-SNAPSHOT">
@@ -1197,6 +1164,39 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/com/jcraft/jsch/0.1.27/jsch-0.1.27-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.ops4j.pax.logging:pax-logging-service:1.4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/logging/pax-logging-service/1.4/pax-logging-service-1.4.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/logging/pax-logging-service/1.4/pax-logging-service-1.4-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/logging/pax-logging-service/1.4/pax-logging-service-1.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.felix:org.apache.felix.configadmin:1.2.7-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.7-SNAPSHOT/org.apache.felix.configadmin-1.2.7-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.7-SNAPSHOT/org.apache.felix.configadmin-1.2.7-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.configadmin/1.2.7-SNAPSHOT/org.apache.felix.configadmin-1.2.7-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.ace:ace-identification-api:0.8.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-api/0.8.0-SNAPSHOT/ace-identification-api-0.8.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-api/0.8.0-SNAPSHOT/ace-identification-api-0.8.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ace/ace-identification-api/0.8.0-SNAPSHOT/ace-identification-api-0.8.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

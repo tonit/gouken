@@ -41,12 +41,58 @@ public class Configure
     synchronized void start()
         throws IOException
     {
-        Configuration config = m_configAdmin.getConfiguration( "org.apache.ace.identification.property" );
+        config( "org.apache.ace.discovery.property", new String[]{ "serverURL", "http://localhost:8080" } );
+        config( "org.apache.ace.identification.property", new String[]{ "gatewayID", "ToniGatewayID" } );
+        config( "org.apache.ace.scheduler",
+                new String[]{ "auditlog", "2000" },
+                new String[]{ "org.apache.ace.deployment.task.DeploymentUpdateTask", "2000" }
+        );
 
-        Dictionary p = new Hashtable();
+        configFactory( "org.apache.ace.gateway.log.factory",
+                       new String[]{ "name", "auditlog" }
+        );
+        configFactory( "org.apache.ace.gateway.log.store.factory",
+                       new String[]{ "name", "auditlog" }
+        );
 
-        p.put( "gatewayID", "ToniGatewayID" );
-        config.update( p );
-        System.out.println( "--ping--" );
+
     }
+
+    private void config( String pid, String[]... tuples )
+        throws IOException
+    {
+        Configuration config = m_configAdmin.getConfiguration( pid );
+        Dictionary p = config.getProperties();
+        if( p == null )
+        {
+            p = new Hashtable();
+        }
+        for( String[] tuple : tuples )
+        {
+            p.put( tuple[ 0 ], tuple[ 1 ] );
+
+        }
+        config.update( p );
+
+    }
+
+    private void configFactory( String pid, String[]... tuples )
+        throws IOException
+    {
+        Configuration config = m_configAdmin.createFactoryConfiguration( pid,null );
+        Dictionary p = config.getProperties();
+        if( p == null )
+        {
+            p = new Hashtable();
+        }
+        for( String[] tuple : tuples )
+        {
+            p.put( tuple[ 0 ], tuple[ 1 ] );
+
+        }
+        config.update( p );
+
+    }
+
+
 }
