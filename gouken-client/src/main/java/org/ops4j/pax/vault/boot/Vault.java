@@ -15,18 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.api;
+package org.ops4j.pax.vault.boot;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * @author Toni Menzel
- * @since Jan 12, 2010
+ * @since Mar 5, 2010
  */
-public interface Vault
+public interface Vault extends Remote
 {
 
-    void start();
+    void stop()
+        throws
+        RemoteException;
 
-    int state();
-
-    void stop();
+    String status()
+        throws
+        RemoteException;
 }

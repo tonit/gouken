@@ -15,16 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.api;
+package org.ops4j.pax.vault.boot.activity;
 
-import java.io.InputStream;
+import java.util.Map;
+import org.ops4j.pax.vault.boot.Command;
 
 /**
  * @author Toni Menzel
- * @since Jan 13, 2010
+ * @since Mar 4, 2010
  */
-public interface VaultWeaver
+public class UnknownCommand implements Command
 {
 
-    InputStream weave( InputStream inp );
+    public UnknownCommand( Map<String, String> map )
+    {
+    }
+
+    public void execute()
+    {
+        throw new RuntimeException( "Unknown command!" );
+    }
 }

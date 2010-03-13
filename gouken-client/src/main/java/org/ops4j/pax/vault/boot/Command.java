@@ -15,14 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.api;
+package org.ops4j.pax.vault.boot;
+
+import java.util.Map;
 
 /**
  * @author Toni Menzel
- * @since Jan 12, 2010
+ * @since Mar 4, 2010
  */
-public interface VaultFactory
+public interface Command
 {
 
-    Vault newInstance();
+    void execute();
 }
