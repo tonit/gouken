@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.log.LogService;
@@ -39,7 +40,7 @@ public class Configure
     // just configure and go away
 
     synchronized void start()
-        throws IOException
+        throws IOException, InvalidSyntaxException
     {
         config( "org.apache.ace.discovery.property", new String[]{ "serverURL", "http://localhost:8080" } );
         config( "org.apache.ace.identification.property", new String[]{ "gatewayID", "ToniGatewayID" } );
@@ -59,8 +60,9 @@ public class Configure
     }
 
     private void config( String pid, String[]... tuples )
-        throws IOException
+        throws IOException, InvalidSyntaxException
     {
+        print( pid );
         Configuration config = m_configAdmin.getConfiguration( pid );
         Dictionary p = config.getProperties();
         if( p == null )
@@ -76,10 +78,23 @@ public class Configure
 
     }
 
+    private void print( String pid )
+        throws IOException, InvalidSyntaxException
+    {
+        Configuration[] configurations = m_configAdmin.listConfigurations( pid );
+        for( Configuration c : configurations )
+        {
+            m_log.log( LogService.LOG_INFO, "PID: " + c.getPid() );
+            m_log.log( LogService.LOG_INFO, "FactoryPID: " + c.getFactoryPid() );
+            Dictionary properties = c.getProperties();
+
+        }
+    }
+
     private void configFactory( String pid, String[]... tuples )
         throws IOException
     {
-        Configuration config = m_configAdmin.createFactoryConfiguration( pid,null );
+        Configuration config = m_configAdmin.createFactoryConfiguration( pid, null );
         Dictionary p = config.getProperties();
         if( p == null )
         {
