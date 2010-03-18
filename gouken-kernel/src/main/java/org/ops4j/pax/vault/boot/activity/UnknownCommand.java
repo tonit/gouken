@@ -33,6 +33,6 @@ public class UnknownCommand implements Command
 
     public void execute()
     {
-        throw new RuntimeException( "Unknown command!" );
+        throw new RuntimeException( "Try start | stop | restart | status" );
     }
 }
