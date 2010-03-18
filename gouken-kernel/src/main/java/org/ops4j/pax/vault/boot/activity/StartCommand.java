@@ -57,7 +57,6 @@ public class StartCommand implements Command
             VaultBoot boot = new VaultBoot( new TDaemon( daemonize ), m_map );
             boot.init();
             boot.start();
-            System.out.println( "Command done." );
         } catch( Throwable e )
         {
             LOG.fatal( "Error: " + e );
