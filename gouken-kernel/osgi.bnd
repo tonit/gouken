@@ -1,0 +1,17 @@
+Bundle-Version>:\
+  ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}
+
+Export-Package:
+
+Import-Package: !*
+
+Private-Package:\
+  ${bundle.namespace}.*
+Embed-Dependency:\
+  *;scope=compile;inline=true
+  
+Main-Class: ${bundle.symbolicName}.Main
+
