@@ -12,7 +12,7 @@
     <groupId>com.okidokiteam.gouken</groupId>
     <artifactId>gouken-pom</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    
+
     <packaging>pom</packaging>
     <inceptionYear>2010</inceptionYear>
 
@@ -32,12 +32,10 @@
         <dependency.version.servletapi>2.4</dependency.version.servletapi>
     </properties>
 
-    <name>OPS4J Pax Vault - POM</name>
-    <description>
-        This pom provides project information that is common to all Pax Vault sub-projects.
-    </description>
 
-    <url>http://incubator.apache.org/ace/</url>
+    <name>okidokiteam gouken - POM</name>
+
+    <url>http://github.com/okidokiteam</url>
 
     <issueManagement>
         <system>jira</system>

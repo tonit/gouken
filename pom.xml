@@ -35,9 +35,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>pom</module>
                 <module>gouken-embed-plugin</module>
                 <module>gouken-configurator</module>
-                <module>gouken-client</module>
+                <module>gouken-kernel</module>
+                <module>gouken-assembly-ace</module>
+
             </modules>
         </profile>
         <profile>
