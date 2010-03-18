@@ -56,8 +56,9 @@ public class VaultBoot implements Vault
     private static final String WORK = ".gouken";
 
     private final File m_folder;
-    private Framework m_framework;
-    private Registry m_registry;
+    // accessed by shutdownhook and remote access
+    private volatile Framework m_framework;
+    private volatile Registry m_registry;
     private TDaemon m_daemon;
 
     public VaultBoot( TDaemon d, Map<String, String> map )
@@ -162,7 +163,7 @@ public class VaultBoot implements Vault
     {
         // foo
         getWorkDir().mkdirs();
-
+        installShutdownHook();
         ClassLoader parent = null;
         try
         {
@@ -210,6 +211,27 @@ public class VaultBoot implements Vault
 
             }
         }
+    }
+
+    private void installShutdownHook()
+    {
+        final VaultBoot vaultBoot = this;
+
+        Runtime.getRuntime().addShutdownHook( new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    vaultBoot.stop();
+                } catch( RemoteException e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        );
     }
 
     private void install( InputStream ins, BundleContext context )
