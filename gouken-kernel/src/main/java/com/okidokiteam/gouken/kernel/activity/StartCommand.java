@@ -15,16 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot.activity;
+package com.okidokiteam.gouken.kernel.activity;
 
-import java.io.File;
 import java.util.Map;
+import com.okidokiteam.gouken.kernel.Command;
+import com.okidokiteam.gouken.kernel.TDaemon;
+import com.okidokiteam.gouken.kernel.VaultBoot;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.vault.boot.Command;
-import org.ops4j.pax.vault.boot.Main;
-import org.ops4j.pax.vault.boot.TDaemon;
-import org.ops4j.pax.vault.boot.VaultBoot;
+import com.okidokiteam.gouken.kernel.Main;
 
 /**
  * @author Toni Menzel

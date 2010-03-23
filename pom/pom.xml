@@ -17,7 +17,7 @@
     <inceptionYear>2010</inceptionYear>
 
     <properties>
-        <namespace>org.ops4j.pax.vault</namespace>
+        <namespace>com.okidokiteam.gouken</namespace>
         <dependency.version.mockito>1.8.1</dependency.version.mockito>
         <dependency.version.wicket>1.4.5</dependency.version.wicket>
 

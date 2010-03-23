@@ -15,19 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot;
-
-import java.util.HashMap;
-import java.util.Map;
-import com.sun.akuma.Daemon;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.vault.boot.activity.RestartCommand;
-import org.ops4j.pax.vault.boot.activity.RemoteCommand;
-import org.ops4j.pax.vault.boot.activity.StartCommand;
-import org.ops4j.pax.vault.boot.activity.StatusCommand;
-import org.ops4j.pax.vault.boot.activity.StopCommand;
-import org.ops4j.pax.vault.boot.activity.UnknownCommand;
+package com.okidokiteam.gouken.kernel;
 
 /**
  * @author Toni Menzel

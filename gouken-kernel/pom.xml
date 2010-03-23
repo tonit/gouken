@@ -18,9 +18,8 @@
     <name>okidokiteam gouken - Kernel</name>
 
     <properties>
-        <bundle.symbolicName>${namespace}.boot</bundle.symbolicName>
-        <bundle.namespace>${namespace}.boot</bundle.namespace>
-        <dependency.ace.version>0.8.0-SNAPSHOT</dependency.ace.version>
+        <bundle.symbolicName>${namespace}.kernel</bundle.symbolicName>
+        <bundle.namespace>${namespace}.kernel</bundle.namespace>
     </properties>
 
     <build>
@@ -78,6 +77,15 @@
             <artifactId>jna</artifactId>
             <version>3.0.9</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+
+        <!-- ace gateway specifics -->
         <!--
         <dependency>
             <artifactId>gouken-configurator</artifactId>
@@ -85,16 +93,7 @@
             <version>0.1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        -->
-        <dependency>
-            <groupId>org.ops4j.pax.logging</groupId>
-            <artifactId>pax-logging-service</artifactId>
-            <version>1.4</version>
-        </dependency>
-      
 
-        <!-- ace gateway specifics -->
-        <!--
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>

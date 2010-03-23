@@ -8,8 +8,9 @@
         <groupId>com.okidokiteam.gouken</groupId>
         <artifactId>gouken-pom</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom</relativePath>
+        <relativePath>../pom/</relativePath>
     </parent>
+    <packaging>gouken</packaging>
 
     <groupId>com.okidokiteam.gouken</groupId>
     <artifactId>gouken-assembly-ace</artifactId>
@@ -23,11 +24,12 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gouken-embed-plugin</artifactId>
                 <version>${project.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>generate</id>
+                        <id>gouken</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>gouken</goal>
                         </goals>
                     </execution>
                 </executions>

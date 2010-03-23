@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot.activity;
+package com.okidokiteam.gouken.kernel.activity;
 
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import org.ops4j.pax.vault.boot.Vault;
+import com.okidokiteam.gouken.kernel.Vault;
 
 /**
  * @author Toni Menzel

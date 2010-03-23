@@ -15,24 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot.activity;
+package com.okidokiteam.gouken.kernel.activity;
 
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.vault.boot.Command;
-import org.ops4j.pax.vault.boot.Main;
+import com.okidokiteam.gouken.kernel.Command;
+import com.okidokiteam.gouken.kernel.Vault;
 
 /**
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class StatusCommand implements Command
+public class StopCommand implements Command
 {
 
-    private static Log LOG = LogFactory.getLog( Main.class );
+    private static Log LOG = LogFactory.getLog( StopCommand.class );
 
-    public StatusCommand( Map<String, String> map )
+    public StopCommand()
     {
     }
 
@@ -40,13 +39,16 @@ public class StatusCommand implements Command
     {
         try
         {
-            LOG.info( "Framework Status: " + new RemoteCommand().getRbc().status() );
+            Vault vault = new RemoteCommand().getRbc();
+
+            vault.stop();
+            LOG.info( "Stopped." );
         } catch( Exception e )
         {
-            LOG.info( "Framework is offline." );
-            LOG.warn( e );
-
+            LOG.info( "Framework is already stopped." );
         }
+
     }
+
 
 }

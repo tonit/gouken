@@ -15,14 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot.activity;
+package com.okidokiteam.gouken.kernel.activity;
 
-import java.rmi.RemoteException;
-import java.util.Map;
+import com.okidokiteam.gouken.kernel.Command;
 import com.sun.akuma.Daemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.vault.boot.Command;
 
 /**
  * @author Toni Menzel

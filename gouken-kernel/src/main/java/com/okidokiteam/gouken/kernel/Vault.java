@@ -15,24 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.vault.boot.activity;
+package com.okidokiteam.gouken.kernel;
 
-import java.util.Map;
-import org.ops4j.pax.vault.boot.Command;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * @author Toni Menzel
- * @since Mar 4, 2010
+ * @since Mar 5, 2010
  */
-public class UnknownCommand implements Command
+public interface Vault extends Remote
 {
 
-    public UnknownCommand( Map<String, String> map )
-    {
-    }
+    void stop()
+        throws
+        RemoteException;
 
-    public void execute()
-    {
-        throw new RuntimeException( "Try start | stop | restart | status" );
-    }
+    String status()
+        throws
+        RemoteException;
 }
