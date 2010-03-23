@@ -39,6 +39,8 @@
                 <module>gouken-embed-plugin</module>
                 <module>gouken-configurator</module>
                 <module>gouken-kernel</module>
+                <module>gouken-spice-updatewatch</module>
+                <module>gouken-spice-web</module>
                 <module>gouken-assembly-ace</module>
 
             </modules>

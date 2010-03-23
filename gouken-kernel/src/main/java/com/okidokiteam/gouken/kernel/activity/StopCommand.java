@@ -45,7 +45,7 @@ public class StopCommand implements Command
             LOG.info( "Stopped." );
         } catch( Exception e )
         {
-            LOG.info( "Framework is already stopped." );
+            LOG.info( "Framework is already stopped.", e );
         }
 
     }

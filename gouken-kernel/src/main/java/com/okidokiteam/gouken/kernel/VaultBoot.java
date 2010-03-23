@@ -18,8 +18,12 @@
 package com.okidokiteam.gouken.kernel;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -28,6 +32,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +61,8 @@ public class VaultBoot implements Vault
     private volatile Registry m_registry;
     private TDaemon m_daemon;
 
+    private File m_liveFolder;
+
     public VaultBoot( TDaemon d, Map<String, String> map )
     {
         String t = map.get( "--target" );
@@ -63,6 +71,12 @@ public class VaultBoot implements Vault
             t = ".";
         }
         File base = new File( t ).getAbsoluteFile();
+        String live = map.get( "--live" );
+        if( live != null )
+        {
+            m_liveFolder = new File( base, live );
+            LOG.info( "Live folder: " + m_liveFolder.getAbsolutePath() );
+        }
         m_daemon = d;
         m_folder = base.getAbsoluteFile();
     }
@@ -112,20 +126,30 @@ public class VaultBoot implements Vault
         return new File( m_folder, WORK );
     }
 
-    public void stop()
+    public synchronized void stop()
         throws RemoteException
     {
         try
         {
             LOG.info( "Stop hook triggered." );
-            m_framework.getBundleContext().getBundle( 0 ).stop();
-            m_registry.unbind( Vault.class.getName() );
-            UnicastRemoteObject.unexportObject( this, true );
-            UnicastRemoteObject.unexportObject( m_registry, true );
-            m_registry = null;
-            m_framework = null;
+            if( m_framework != null )
+            {
+                BundleContext ctx = m_framework.getBundleContext();
+                Bundle systemBundle = ctx.getBundle( 0 );
+                systemBundle.stop();
+                m_framework = null;
+            }
+            if( m_registry != null )
+            {
+                m_registry.unbind( Vault.class.getName() );
+                UnicastRemoteObject.unexportObject( this, true );
+                UnicastRemoteObject.unexportObject( m_registry, true );
+                m_registry = null;
+            }
             FileUtils.delete( getWorkDir() );
             System.gc();
+
+            LOG.info( "Shutdown complete." );
 
 
         } catch( BundleException e )
@@ -153,7 +177,7 @@ public class VaultBoot implements Vault
         }
     }
 
-    public void start()
+    public synchronized void start()
     {
         // foo
         getWorkDir().mkdirs();
@@ -177,7 +201,7 @@ public class VaultBoot implements Vault
 
             m_framework.init();
             bind();
-            LOG.info( "Initialized OSGi container." );
+            LOG.info( "Phase 1 done: Initialized OSGi container." );
             BundleContext context = m_framework.getBundleContext();
 
             InputStream ins = getClass().getResourceAsStream( "/META-INF/gouken/provisioning.properties" );
@@ -193,6 +217,8 @@ public class VaultBoot implements Vault
                 LOG.debug( "Started: " + b.getSymbolicName() );
             }
             Thread.currentThread().setContextClassLoader( parent );
+            LOG.info( "Phase 2 done: Installed management bundles." );
+
         } catch( Exception e )
         {
             e.printStackTrace();
@@ -243,16 +269,127 @@ public class VaultBoot implements Vault
                 if( s != null && !s.equals( "." ) )
                 {
                     LOG.info( "+ " + s );
-                    Bundle b = context.installBundle( s, getClass().getResourceAsStream( "/META-INF/gouken/" + s ) );
+
+                    // UpdateLocation: try to find corporating bundle locations
+                    String embeddedPath = "/META-INF/gouken/" + s;
+
+                    if( m_liveFolder != null )
+                    {
+
+                        URI path = findLocation( embeddedPath );
+                        if( path != null )
+                        {
+                            Bundle b = context.installBundle( path.toASCIIString(), path.toURL().openStream() );
+                        }
+                        else
+                        {
+                            Bundle b = context.installBundle( s, getClass().getResourceAsStream( embeddedPath ) );
+
+                        }
+                    }
+                    else
+                    {
+                        Bundle b = context.installBundle( s, getClass().getResourceAsStream( embeddedPath ) );
+                    }
                 }
             }
         }
     }
 
-    private void daemonize()
-        throws Exception
+    private URI findLocation( String path )
+        throws IOException
     {
+        // read in order to get matcher information:
+        LOG.info( "Trying to find a live location for " + path );
+        Manifest man = getManifest( getClass().getResourceAsStream( path ) );
+        String bundleSymbolicName = getBundleSymbolicName( man );
+        URI location = findMatching( bundleSymbolicName );
+        if( location != null )
+        {
+            LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
+            return location;
+        }
+        else
+        {
+            LOG.info( "No live location found for " + bundleSymbolicName );
+        }
+        return null;
+    }
 
+    private Manifest getManifest( InputStream jar )
+    {
+        Manifest man = null;
+
+        JarInputStream jin = null;
+        try
+        {
+            jin = new JarInputStream( jar );
+            man = jin.getManifest();
+
+        } catch( IOException e )
+        {
+            // don't care
+        } finally
+        {
+            try
+            {
+                jin.close();
+            } catch( IOException e )
+            {
+
+            }
+        }
+        return man;
+    }
+
+    private URI findMatching( String bundleSymbolicName )
+        throws FileNotFoundException
+    {
+        // traverse folder in order to locate a matching bundle:
+        return findMatching( m_liveFolder, bundleSymbolicName );
+
+    }
+
+    private URI findMatching( File folder, String bundleSymbolicName )
+        throws FileNotFoundException
+    {
+        for( File f : folder.listFiles() )
+        {
+            if( f.isDirectory() && !f.isHidden() && !f.getName().startsWith( "." ) && !f.getName().equals( "classes" ) )
+            {
+                URI res = findMatching( f, bundleSymbolicName );
+                if( res != null )
+                {
+                    return res;
+                }
+            }
+            else
+            {
+                if( f.getName().endsWith( ".jar" ) )
+                {
+                    try
+                    {
+                        LOG.info( "Considering " + f.getAbsolutePath() + " as location for " + bundleSymbolicName );
+                        Manifest man = getManifest( new FileInputStream( f ) );
+                        String sym = getBundleSymbolicName( man );
+                        if( sym != null && sym.equals( bundleSymbolicName ) )
+                        {
+                            // found !
+                            return f.toURI();
+                        }
+                    } catch( IOException ioE )
+                    {
+
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getBundleSymbolicName( Manifest man )
+    {
+        return man.getMainAttributes().getValue( "Bundle-SymbolicName" );
     }
 
     private void tryShutdown()
