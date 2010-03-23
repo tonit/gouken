@@ -253,13 +253,16 @@ public class BuilderPlugin extends AbstractMojo
                 //  System.out.println( "+ " + rel );
                 ZipEntry entry = new ZipEntry( rel );
                 out.putNextEntry( entry );
-                InputStream fis = new FileInputStream( f );
-                try
+                if( f.isFile() )
                 {
-                    StreamUtils.copyStream( fis, out, false );
-                } finally
-                {
-                    fis.close();
+                    InputStream fis = new FileInputStream( f );
+                    try
+                    {
+                        StreamUtils.copyStream( fis, out, false );
+                    } finally
+                    {
+                        fis.close();
+                    }
                 }
             }
         } finally
@@ -293,7 +296,22 @@ public class BuilderPlugin extends AbstractMojo
                 }
                 else
                 {
-                    return 1;
+                    if( file.getAbsolutePath().contains( "META-INF" ) )
+                    {
+                        if( file1.getName().endsWith( "MANIFEST.MF" ) )
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            return -1;
+                        }
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+
                 }
             }
         }
@@ -317,6 +335,7 @@ public class BuilderPlugin extends AbstractMojo
             }
             else
             {
+                list.add( f );
                 addAll( list, f );
             }
         }
