@@ -19,7 +19,7 @@
     <properties>
         <namespace>com.okidokiteam.gouken</namespace>
         <dependency.version.mockito>1.8.1</dependency.version.mockito>
-        <dependency.version.wicket>1.4.5</dependency.version.wicket>
+        <dependency.version.wicket>1.4.7</dependency.version.wicket>
 
         <dependency.version.dependencymanager>2.0.1</dependency.version.dependencymanager>
 
