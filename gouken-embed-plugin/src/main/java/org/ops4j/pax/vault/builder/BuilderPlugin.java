@@ -119,8 +119,7 @@ public class BuilderPlugin extends AbstractMojo
 
     private File provisioningFile;
 
-     /**
-     *
+    /**
      * @parameter
      */
 
@@ -201,6 +200,16 @@ public class BuilderPlugin extends AbstractMojo
             }
 
             p.put( "bundles", sb.toString() );
+            File frameworkOptions = new File( project.getBasedir(), "framework.properties" );
+            getLog().info( "looking for " + frameworkOptions.getAbsolutePath() );
+            if( frameworkOptions.exists() )
+            {
+                getLog().info( "Found framework.properties" );
+
+                Properties fwProps = new Properties();
+                fwProps.load( new FileInputStream( frameworkOptions ) );
+                p.putAll( fwProps );
+            }
             p.store( out, "Written at " + new Date() );
 
             extractFile( getKernel() );

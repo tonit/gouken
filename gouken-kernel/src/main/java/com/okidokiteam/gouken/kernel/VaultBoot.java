@@ -185,16 +185,23 @@ public class VaultBoot implements Vault
         ClassLoader parent = null;
         try
         {
+            InputStream ins = getClass().getResourceAsStream( "/META-INF/gouken/provisioning.properties" );
+            Properties descriptor = new Properties();
+            if( ins != null )
+            {
+                descriptor.load( ins );
+            }
+
             final Map<String, String> p = new HashMap<String, String>();
             File worker = new File( getWorkDir(), "framework" );
             FileUtils.delete( worker );
             p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
-            p.put( "org.osgi.service.http.port", "9191" );
-            p.put( "org.osgi.framework.system.packages.extra", "org.apache.log4j" );
-            System.out.println( "---- setting ports and all that !!!" );
-            //p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
 
-            // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
+            for( Object key : descriptor.keySet() )
+            {
+                p.put( (String) key, descriptor.getProperty( (String) key ) );
+            }
+
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
 
@@ -207,11 +214,8 @@ public class VaultBoot implements Vault
             LOG.info( "Phase 1 done: Initialized OSGi container." );
             BundleContext context = m_framework.getBundleContext();
 
-            InputStream ins = getClass().getResourceAsStream( "/META-INF/gouken/provisioning.properties" );
-            if( ins != null )
-            {
-                install( ins, context );
-            }
+            String bundles = descriptor.getProperty( "bundles" );
+            install( bundles, context );
 
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )
@@ -264,14 +268,11 @@ public class VaultBoot implements Vault
         );
     }
 
-    private void install( InputStream ins, BundleContext context )
+    private void install( String cp, BundleContext context )
         throws IOException, BundleException
     {
         LOG.info( "Found initial provisioning descriptor.." );
 
-        Properties desc = new Properties();
-        desc.load( ins );
-        String cp = (String) desc.getProperty( "bundles" );
         if( cp != null )
         {
             for( String s : cp.split( "," ) )
@@ -315,12 +316,12 @@ public class VaultBoot implements Vault
         URI location = findMatching( bundleSymbolicName );
         if( location != null )
         {
-         //   LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
+            //   LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
             return location;
         }
         else
         {
-       //     LOG.info( "No live location found for " + bundleSymbolicName );
+            //     LOG.info( "No live location found for " + bundleSymbolicName );
         }
         return null;
     }
