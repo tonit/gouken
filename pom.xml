@@ -30,19 +30,26 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>plugins</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>gouken-embed-plugin</module>
+            </modules>
+        </profile>
+         <profile>
+            <id>bundles</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>pom</module>
-                <module>gouken-embed-plugin</module>
                 <module>gouken-configurator</module>
                 <module>gouken-kernel</module>
                 <module>gouken-spice-updatewatch</module>
                 <module>gouken-spice-web</module>
                 <module>gouken-assembly-ace</module>
-
             </modules>
         </profile>
         <profile>
