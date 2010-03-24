@@ -189,11 +189,14 @@ public class VaultBoot implements Vault
             File worker = new File( getWorkDir(), "framework" );
             FileUtils.delete( worker );
             p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
+            p.put( "org.osgi.service.http.port", "9191" );
+            p.put( "org.osgi.framework.system.packages.extra", "org.apache.log4j" );
+            System.out.println( "---- setting ports and all that !!!" );
             //p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
-            //    Thread.currentThread().setContextClassLoader( null );
+            Thread.currentThread().setContextClassLoader( null );
 
             FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
 
@@ -213,8 +216,15 @@ public class VaultBoot implements Vault
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )
             {
-                b.start();
-                LOG.debug( "Started: " + b.getSymbolicName() );
+                try
+                {
+                    b.start();
+                    LOG.debug( "Started: " + b.getSymbolicName() );
+                } catch( Exception e )
+                {
+                    LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
+
+                }
             }
             Thread.currentThread().setContextClassLoader( parent );
             LOG.info( "Phase 2 done: Installed management bundles." );
@@ -300,18 +310,17 @@ public class VaultBoot implements Vault
         throws IOException
     {
         // read in order to get matcher information:
-        LOG.info( "Trying to find a live location for " + path );
         Manifest man = getManifest( getClass().getResourceAsStream( path ) );
         String bundleSymbolicName = getBundleSymbolicName( man );
         URI location = findMatching( bundleSymbolicName );
         if( location != null )
         {
-            LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
+         //   LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
             return location;
         }
         else
         {
-            LOG.info( "No live location found for " + bundleSymbolicName );
+       //     LOG.info( "No live location found for " + bundleSymbolicName );
         }
         return null;
     }
@@ -369,7 +378,6 @@ public class VaultBoot implements Vault
                 {
                     try
                     {
-                        LOG.info( "Considering " + f.getAbsolutePath() + " as location for " + bundleSymbolicName );
                         Manifest man = getManifest( new FileInputStream( f ) );
                         String sym = getBundleSymbolicName( man );
                         if( sym != null && sym.equals( bundleSymbolicName ) )
