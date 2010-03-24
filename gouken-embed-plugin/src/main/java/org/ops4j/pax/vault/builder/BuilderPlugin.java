@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
@@ -117,6 +118,13 @@ public class BuilderPlugin extends AbstractMojo
      */
 
     private File provisioningFile;
+
+     /**
+     *
+     * @parameter
+     */
+
+    private Map fwOptions;
 
     /**
      * The file to generate
