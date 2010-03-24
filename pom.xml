@@ -35,6 +35,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>pom</module>
                 <module>gouken-embed-plugin</module>
             </modules>
         </profile>
