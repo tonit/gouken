@@ -34,13 +34,18 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.DefaultArtifactCollector;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,327 +56,429 @@ import org.ops4j.io.StreamUtils;
 
 /**
  * Woodoo
- * 
+ *
  * @goal gouken
  * @requiresDependencyResolution test
  * @description build an gouken assembly
  */
-public class BuilderPlugin extends AbstractMojo {
+public class BuilderPlugin extends AbstractMojo
+{
 
-	protected static final String SEPARATOR = "/";
+    protected static final String SEPARATOR = "/";
 
-	/**
-	 * The directory for the generated JAR.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @required
-	 */
-	private String buildDirectory;
+    /**
+     * The directory for the generated JAR.
+     *
+     * @parameter expression="${project.build.directory}"
+     * @required
+     */
+    private String buildDirectory;
 
-	/**
-	 * Project types which this plugin supports.
-	 * 
-	 * @parameter
-	 */
-	private List supportedProjectTypes = Arrays
-			.asList(new String[] { "gouken" });
+    /**
+     * Project types which this plugin supports.
+     *
+     * @parameter
+     */
+    private List supportedProjectTypes = Arrays
+        .asList( new String[]{ "gouken" } );
 
-	/**
-	 * @component
-	 */
-	private ArtifactHandlerManager m_artifactHandlerManager;
+    /**
+     * @component
+     */
+    private ArtifactHandlerManager m_artifactHandlerManager;
 
-	/**
-	 * Classifier type of the bundle to be installed. For example, "jdk14".
-	 * Defaults to none which means this is the project's main bundle.
-	 * 
-	 * @parameter
-	 */
-	protected String classifier;
+    /**
+     * Classifier type of the bundle to be installed. For example, "jdk14".
+     * Defaults to none which means this is the project's main bundle.
+     *
+     * @parameter
+     */
+    protected String classifier;
 
-	/**
-	 * @component
-	 */
-	private MavenProjectHelper m_projectHelper;
+    /**
+     * @component
+     */
+    private MavenProjectHelper m_projectHelper;
 
-	/**
-	 * The maven project.
-	 * 
-	 * @parameter expression="${project}"
-	 * @required
-	 * @readonly
-	 */
-	protected MavenProject project;
+    /**
+     * The maven project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
 
-	/**
-	 * @parameter expression='true'
-	 * @required
-	 */
-	protected boolean recursive;
+    /**
+     * @parameter expression='true'
+     * @required
+     */
+    protected boolean recursive;
 
-	/**
-	 * The file to generate
-	 * 
-	 * @parameter default-value=
-	 *            "${project.build.directory}/classes/META-INF/gouken/provisioning.properties"
-	 */
+    /**
+     * The file to generate
+     *
+     * @parameter default-value=
+     * "${project.build.directory}/classes/META-INF/gouken/provisioning.properties"
+     */
 
-	private File provisioningFile;
+    private File provisioningFile;
 
-	/**
-	 * @parameter
-	 */
+    /**
+     * @parameter
+     */
 
-	private Map fwOptions;
+    private Map fwOptions;
 
-	/**
-	 * The file to generate
-	 * 
-	 * @parameter 
-	 *            default-value="${project.build.directory}/classes/META-INF/gouken/"
-	 */
+    /**
+     * The file to generate
+     *
+     * @parameter default-value="${project.build.directory}/classes/META-INF/gouken/"
+     */
 
-	private File folder;
+    private File folder;
 
-	/**
-	 * The file to generate
-	 * 
-	 * @parameter default-value="${project.build.directory}/classes/"
-	 */
+    /**
+     * The file to generate
+     *
+     * @parameter default-value="${project.build.directory}/classes/"
+     */
 
-	private File kernelFolder;
+    private File kernelFolder;
 
-	/**
-	 * @parameter default-value="${localRepository}"
-	 */
-	protected ArtifactRepository localRepo;
+    /**
+     * @parameter default-value="${localRepository}"
+     */
+    protected ArtifactRepository localRepo;
 
-	/**
-	 * @parameter default-value="${project.remoteArtifactRepositories}"
-	 */
-	protected List remoteRepos;
+    /**
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     */
+    protected List remoteRepos;
 
-	/**
-	 * @component
-	 */
-	protected ArtifactMetadataSource artifactMetadataSource;
+    /**
+     * @component
+     */
+    protected ArtifactMetadataSource artifactMetadataSource;
 
-	/**
-	 * @component
-	 */
-	protected ArtifactResolver resolver;
+    /**
+     * @component
+     */
+    protected ArtifactResolver resolver;
 
-	protected ArtifactCollector collector = new DefaultArtifactCollector();
+    protected ArtifactCollector collector = new DefaultArtifactCollector();
 
-	/**
-	 * @component
-	 */
-	protected ArtifactFactory factory;
+    /**
+     * @component
+     */
+    protected ArtifactFactory factory;
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		String projectType = project.getArtifact().getType();
-		// ignore unsupported project types, useful when bundleplugin is
-		// configured in parent pom
-		if (!supportedProjectTypes.contains(projectType)) {
-			getLog().warn(
-					"Ignoring project type " + projectType
-							+ " - supportedProjectTypes = "
-							+ supportedProjectTypes);
-			return;
-		}
-		getLog().info("Execute " + BuilderPlugin.class.getName());
-		OutputStream out = null;
-		try {
-			provisioningFile.getParentFile().mkdirs();
-			out = new FileOutputStream(provisioningFile);
-			StringBuilder sb = new StringBuilder();
-			Properties p = new Properties();
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
 
-			for (Object dep : project.getDependencyArtifacts()) {
-				Artifact a = (Artifact) dep;
-				if (a.getScope().equals("provided")) {
-					populateProperties(sb, a.getFile().getName());
-					populateFile(a.getFile());
-				}
-			}
+        String projectType = project.getArtifact().getType();
+        // ignore unsupported project types, useful when bundleplugin is
+        // configured in parent pom
+        if( !supportedProjectTypes.contains( projectType ) )
+        {
+            getLog().warn(
+                "Ignoring project type " + projectType
+                + " - supportedProjectTypes = "
+                + supportedProjectTypes
+            );
+            return;
+        }
+        getLog().info( "Execute " + BuilderPlugin.class.getName() );
+        OutputStream out = null;
+        try
+        {
+            provisioningFile.getParentFile().mkdirs();
+            out = new FileOutputStream( provisioningFile );
+            StringBuilder sb = new StringBuilder();
+            Properties p = new Properties();
 
-			p.put("bundles", sb.toString());
-			File frameworkOptions = new File(project.getBasedir(),
-					"framework.properties");
-			getLog().info("looking for " + frameworkOptions.getAbsolutePath());
-			if (frameworkOptions.exists()) {
-				getLog().info("Found framework.properties");
+            for( Object dep : project.getDependencyArtifacts() )
+            {
+                Artifact a = (Artifact) dep;
+                if( a.getScope().equals( "provided" ) )
+                {
+                    populateProperties( sb, a.getFile().getName() );
+                    populateFile( a.getFile() );
+                }
+            }
 
-				Properties fwProps = new Properties();
-				fwProps.load(new FileInputStream(frameworkOptions));
-				p.putAll(fwProps);
-			}
-			p.store(out, "Written at " + new Date());
+            p.put( "bundles", sb.toString() );
+            File frameworkOptions = new File( project.getBasedir(),
+                                              "framework.properties"
+            );
+            getLog().info( "looking for " + frameworkOptions.getAbsolutePath() );
+            if( frameworkOptions.exists() )
+            {
+                getLog().info( "Found framework.properties" );
 
-			extractFile(getKernel());
+                Properties fwProps = new Properties();
+                fwProps.load( new FileInputStream( frameworkOptions ) );
+                p.putAll( fwProps );
+            }
+            p.store( out, "Written at " + new Date() );
 
-			File jarFile = new File(getBuildDirectory(), getBundleName(project));
-			exportAssembly(jarFile);
+            extractFile( getKernel() );
 
-			Artifact mainArtifact = project.getArtifact();
+            File jarFile = new File( getBuildDirectory(), getBundleName( project ) );
+            exportAssembly( jarFile );
 
-			// workaround for MNG-1682: force maven to install artifact using
-			// the "jar" handler
-			mainArtifact.setArtifactHandler(m_artifactHandlerManager
-					.getArtifactHandler("jar"));
+            Artifact mainArtifact = project.getArtifact();
 
-			if (null == classifier || classifier.trim().length() == 0) {
-				mainArtifact.setFile(jarFile);
-			} else {
-				m_projectHelper.attachArtifact(project, jarFile, classifier);
-			}
+            // workaround for MNG-1682: force maven to install artifact using
+            // the "jar" handler
+            mainArtifact.setArtifactHandler( m_artifactHandlerManager
+                .getArtifactHandler( "jar" )
+            );
 
-			getLog().info("Created: " + jarFile);
+            if( null == classifier || classifier.trim().length() == 0 )
+            {
+                mainArtifact.setFile( jarFile );
+            }
+            else
+            {
+                m_projectHelper.attachArtifact( project, jarFile, classifier );
+            }
 
-		} catch (Exception e) {
-			throw new MojoExecutionException(
-					"Unable to create dependencies file: " + e, e);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					getLog().info(
-							"Failed to close: " + provisioningFile
-									+ ". Reason: " + e, e);
-				}
-			}
-		}
-	}
+            getLog().info( "Created: " + jarFile );
 
-	private void exportAssembly(File jarFile) throws IOException {
-		// Just zip folder and write to file as jar. Done.
-		JarOutputStream out = new JarOutputStream(new FileOutputStream(jarFile));
-		try {
-			File[] index = getFiles();
+        } catch( Exception e )
+        {
+            throw new MojoExecutionException(
+                "Unable to create dependencies file: " + e, e
+            );
+        } finally
+        {
+            if( out != null )
+            {
+                try
+                {
+                    out.close();
+                } catch( IOException e )
+                {
+                    getLog().info(
+                        "Failed to close: " + provisioningFile
+                        + ". Reason: " + e, e
+                    );
+                }
+            }
+        }
+    }
 
-			for (File f : index) {
-				// sum them up all
-				String rel = relative(f);
-				// System.out.println( "+ " + rel );
-				ZipEntry entry = new ZipEntry(rel);
-				out.putNextEntry(entry);
-				if (f.isFile()) {
-					InputStream fis = new FileInputStream(f);
-					try {
-						StreamUtils.copyStream(fis, out, false);
-					} finally {
-						fis.close();
-					}
-				}
-			}
-		} finally {
-			out.close();
-		}
-	}
+    private void exportAssembly( File jarFile )
+        throws IOException
+    {
+        // Just zip folder and write to file as jar. Done.
+        JarOutputStream out = new JarOutputStream( new FileOutputStream( jarFile ) );
+        try
+        {
+            File[] index = getFiles();
 
-	private String relative(File f) throws IOException {
-		String base = kernelFolder.getCanonicalPath();
-		return f.getCanonicalPath().substring(base.length() + 1);
-	}
+            for( File f : index )
+            {
+                // sum them up all
+                String rel = relative( f );
+                // System.out.println( "+ " + rel );
+                ZipEntry entry = new ZipEntry( rel );
+                out.putNextEntry( entry );
+                if( f.isFile() )
+                {
+                    InputStream fis = new FileInputStream( f );
+                    try
+                    {
+                        StreamUtils.copyStream( fis, out, false );
+                    } finally
+                    {
+                        fis.close();
+                    }
+                }
+            }
+        } finally
+        {
+            out.close();
+        }
+    }
 
-	private File[] getFiles() {
-		List<File> list = new ArrayList<File>();
-		addAll(list, kernelFolder);
-		// push certain keys up:
-		File[] arr = list.toArray(new File[list.size()]);
-		// sort:
-		Arrays.sort(arr, new Comparator<File>() {
+    private String relative( File f )
+        throws IOException
+    {
+        String base = kernelFolder.getCanonicalPath();
+        return f.getCanonicalPath().substring( base.length() + 1 );
+    }
 
-			public int compare(File file, File file1) {
-				if (file.getName().endsWith("MANIFEST.MF")) {
-					return -1;
-				} else {
-					if (file.getAbsolutePath().contains("META-INF")) {
-						if (file1.getName().endsWith("MANIFEST.MF")) {
-							return 1;
-						} else {
-							return -1;
-						}
-					} else {
-						return 1;
-					}
+    private File[] getFiles()
+    {
+        List<File> list = new ArrayList<File>();
+        addAll( list, kernelFolder );
+        // push certain keys up:
+        File[] arr = list.toArray( new File[list.size()] );
+        // sort:
+        Arrays.sort( arr, new Comparator<File>()
+        {
 
-				}
-			}
-		});
-		return arr;
-	}
+            public int compare( File file, File file1 )
+            {
+                if( file.getName().endsWith( "MANIFEST.MF" ) )
+                {
+                    return -1;
+                }
+                else
+                {
+                    if( file.getAbsolutePath().contains( "META-INF" ) )
+                    {
+                        if( file1.getName().endsWith( "MANIFEST.MF" ) )
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            return -1;
+                        }
+                    }
+                    else
+                    {
+                        return 1;
+                    }
 
-	/**
-	 * recursive !
-	 * 
-	 * @param list
-	 * @param folder
-	 */
-	private void addAll(List<File> list, File folder) {
-		for (File f : folder.listFiles()) {
-			if (f.isFile()) {
-				list.add(f);
-			} else {
-				list.add(f);
-				addAll(list, f);
-			}
-		}
-	}
+                }
+            }
+        }
+        );
+        return arr;
+    }
 
-	protected String getBundleName(MavenProject currentProject) {
-		String finalName = currentProject.getBuild().getFinalName();
-		if (null != classifier && classifier.trim().length() > 0) {
-			return finalName + '-' + classifier + ".jar";
-		}
+    /**
+     * recursive !
+     *
+     * @param list
+     * @param folder
+     */
+    private void addAll( List<File> list, File folder )
+    {
+        for( File f : folder.listFiles() )
+        {
+            if( f.isFile() )
+            {
+                list.add( f );
+            }
+            else
+            {
+                list.add( f );
+                addAll( list, f );
+            }
+        }
+    }
 
-		return finalName + ".jar";
-	}
+    protected String getBundleName( MavenProject currentProject )
+    {
+        String finalName = currentProject.getBuild().getFinalName();
+        if( null != classifier && classifier.trim().length() > 0 )
+        {
+            return finalName + '-' + classifier + ".jar";
+        }
 
-	private void extractFile(File kernel) throws IOException {
-		ZipInputStream in = new ZipInputStream(new FileInputStream(kernel));
-		ZipEntry entry = null;
-		while ((entry = in.getNextEntry()) != null) {
-			File sub = new File(entry.getName());
-			if (!entry.isDirectory()) {
-				File dest = new File(kernelFolder.getAbsolutePath() + "/"
-						+ entry.getName());
-				dest.getParentFile().mkdirs();
-				OutputStream out = new FileOutputStream(dest);
-				try {
-					StreamUtils.copyStream(in, out, false);
-				} finally {
-					out.close();
-				}
-			}
-		}
-	}
+        return finalName + ".jar";
+    }
 
-	private void populateFile(File file) throws IOException {
-		// Basically: copy file to new destination
-		FileUtils.copyFile(file, new File(folder, file.getName()));
-		getLog().info("Copied file " + file.getName());
-	}
+    private void extractFile( File kernel )
+        throws IOException
+    {
+        ZipInputStream in = new ZipInputStream( new FileInputStream( kernel ) );
+        ZipEntry entry = null;
+        while( ( entry = in.getNextEntry() ) != null )
+        {
+            File sub = new File( entry.getName() );
+            if( !entry.isDirectory() )
+            {
+                File dest = new File( kernelFolder.getAbsolutePath() + "/"
+                                      + entry.getName()
+                );
+                dest.getParentFile().mkdirs();
+                OutputStream out = new FileOutputStream( dest );
+                try
+                {
+                    StreamUtils.copyStream( in, out, false );
+                } finally
+                {
+                    out.close();
+                }
+            }
+        }
+    }
 
-	protected void populateProperties(StringBuilder sb, String s)
-			throws IOException {
-		sb.append(s);
-		sb.append(",");
-	}
+    private void populateFile( File file )
+        throws IOException
+    {
+        // Basically: copy file to new destination
+        FileUtils.copyFile( file, new File( folder, file.getName() ) );
+        getLog().info( "Copied file " + file.getName() );
+    }
 
-	public File getKernel() {
-		// latest local kernel for now
-		File f = new File(
-				"/Users/tonit/devel/com.okidokiteam/gouken/gouken-kernel/target/gouken-kernel-0.1.0-SNAPSHOT.jar");
-		return f;
-	}
+    protected void populateProperties( StringBuilder sb, String s )
+        throws IOException
+    {
+        sb.append( s );
+        sb.append( "," );
+    }
 
-	protected String getBuildDirectory() {
-		return buildDirectory;
-	}
+    public File getKernel()
+    {
+        File f = null;
 
-	protected void setBuildDirectory(String _buildirectory) {
-		buildDirectory = _buildirectory;
-	}
+        // latest local kernel for now
+        ArtifactHandler handler = m_artifactHandlerManager.getArtifactHandler( "jar" );
+
+        Artifact artifact = new DefaultArtifact( "com.okidokiteam.gouken",
+                                                 "gouken-kernel",
+                                                 VersionRange.createFromVersion( "0.1.0-SNAPSHOT" ),
+                                                 "compile",
+                                                 "jar",
+                                                 null,
+                                                 handler
+        );
+
+        ArtifactRepository repo = localRepo;
+
+        try
+        {
+            resolver.resolve( artifact, remoteRepos, repo );
+            f = artifact.getFile();
+
+        } catch( ArtifactResolutionException e )
+        {
+            e.printStackTrace();
+        } catch( ArtifactNotFoundException e )
+        {
+            e.printStackTrace();
+        }
+
+        if( f == null )
+        {
+            getLog().info( "Fallblack :((" );
+            f = new File(
+                "/Users/tonit/devel/com.okidokiteam/gouken/gouken-kernel/target/gouken-kernel-0.1.0-SNAPSHOT.jar"
+            );
+        }
+        else
+        {
+            getLog().info( "Found by resolver! ;)" );
+
+        }
+        return f;
+    }
+
+    protected String getBuildDirectory()
+    {
+        return buildDirectory;
+    }
+
+    protected void setBuildDirectory( String _buildirectory )
+    {
+        buildDirectory = _buildirectory;
+    }
 }
