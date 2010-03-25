@@ -214,7 +214,8 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/gouken-assembly-ace/gouken-assembly-ace.iml" filepath="$PROJECT_DIR$/gouken-assembly-ace/gouken-assembly-ace.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drops/drops-acetarget/drops-acetarget.iml" filepath="$PROJECT_DIR$/drops/drops-acetarget/drops-acetarget.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drops/drops-miniweb/drops-miniweb.iml" filepath="$PROJECT_DIR$/drops/drops-miniweb/drops-miniweb.iml" />
       <module fileurl="file://$PROJECT_DIR$/gouken-configurator/gouken-configurator.iml" filepath="$PROJECT_DIR$/gouken-configurator/gouken-configurator.iml" />
       <module fileurl="file://$PROJECT_DIR$/gouken-embed-plugin/gouken-embed-plugin.iml" filepath="$PROJECT_DIR$/gouken-embed-plugin/gouken-embed-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/gouken-client/gouken-kernel.iml" filepath="$PROJECT_DIR$/gouken-client/gouken-kernel.iml" />

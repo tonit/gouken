@@ -8,15 +8,15 @@
         <groupId>com.okidokiteam.gouken</groupId>
         <artifactId>gouken-pom</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom/</relativePath>
+        <relativePath>../../pom/</relativePath>
     </parent>
     <packaging>gouken</packaging>
 
     <groupId>com.okidokiteam.gouken</groupId>
-    <artifactId>gouken-assembly-ace</artifactId>
+    <artifactId>drops-acetarget</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
-    <name>okidokiteam gouken - Assembly ACE</name>
+    <name>Drops - ACE Target</name>
 
     <build>
         <plugins>
