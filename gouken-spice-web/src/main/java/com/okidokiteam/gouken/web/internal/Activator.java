@@ -27,6 +27,7 @@ import org.apache.wicket.protocol.http.WicketFilter;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 /**
  * @author Toni Menzel
@@ -86,7 +87,12 @@ public class Activator implements BundleActivator
             };
 
             httpService.registerFilter( filter, "/*", dict, 0, httpService.createDefaultHttpContext() );
+            httpService.registerResources( "/", "/web", httpService.createDefaultHttpContext() );
+
         } catch( ServletException e )
+        {
+            throw new RuntimeException( e );
+        } catch( NamespaceException e )
         {
             throw new RuntimeException( e );
         } finally

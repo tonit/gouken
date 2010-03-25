@@ -41,7 +41,7 @@ public class MainPage extends WebPage
     {
 
         // Add the simplest type of label
-        add( new Label( "message", "Vault has been initialized but its empty." ) );
+        //add( new Label( "message", "Vault has been initialized but its empty." ) );
 
         // TODO Add your page's components here
     }
