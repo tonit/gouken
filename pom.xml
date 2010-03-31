@@ -1,52 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.okidokiteam.gouken</groupId>
-    <artifactId>gouken-reactor</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+	<groupId>com.okidokiteam.gouken</groupId>
+	<artifactId>gouken-reactor</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
 
-    <packaging>pom</packaging>
-    <name>okidokiteam gouken - Reactor</name>
+	<packaging>pom</packaging>
+	<name>okidokiteam gouken - Reactor</name>
 
-    <profiles>
-        <profile>
-            <id>plugins</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>pom</module>
-                <module>gouken-embed-plugin</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>spice</id>
-            <modules>
-                <module>pom</module>
-                <module>gouken-configurator</module>
-                <module>gouken-spice-updatewatch</module>
-                <module>gouken-spice-web</module>
-            </modules>
-        </profile>
-         <profile>
-            <id>kernel</id>
-            <modules>     
-                <module>gouken-kernel</module>                   
-            </modules>
-        </profile>
-         <profile>
-            <id>drops</id>
-            <modules>
-                <module>drops/drops-acetarget</module>
-                <module>drops/drops-miniweb</module>                
-            </modules>
-        </profile>
-        <profile>
-            <id>it</id>
-            <modules>
-
-            </modules>
-        </profile>
-    </profiles>
+	<profiles>
+		<profile>
+			<id>kernel</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>pom</module>
+				<module>gouken-embed-plugin</module>
+				<module>gouken-kernel</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>spice</id>
+			<modules>
+				<module>pom</module>
+				<module>gouken-configurator</module>
+				<module>gouken-spice-updatewatch</module>
+				<module>gouken-spice-web</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>drops</id>
+			<modules>
+				<!--
+					<module>drops/com.okidokiteam.gelix</module>
+				-->
+				<module>drops/com.okidokiteam.gace</module>
+				<module>drops/com.okidokiteam.miniweb</module>
+			</modules>
+			
+		</profile>
+	</profiles>
 </project>

@@ -30,17 +30,14 @@ import org.osgi.service.log.LogService;
 
 public class Activator extends DependencyActivatorBase {
 
-	public void init(BundleContext context, DependencyManager manager)
-			throws Exception {
-		manager.add(createService().setImplementation(new Configure()).add(
-				createServiceDependency().setService(ConfigurationAdmin.class)
-						.setRequired(true)).add(
-				createServiceDependency().setService(LogService.class)
-						.setRequired(false)));
+	public void init(BundleContext context, DependencyManager manager) throws Exception {
+		manager.add(createService()
+				.setImplementation(new Configure())
+				.add(createServiceDependency().setService(ConfigurationAdmin.class).setRequired(true))
+				.add(createServiceDependency().setService(LogService.class).setRequired(false)));
 	}
 
-	public void destroy(BundleContext context, DependencyManager manager)
-			throws Exception {
+	public void destroy(BundleContext context, DependencyManager manager) throws Exception {
 		// do nothing
 	}
 
