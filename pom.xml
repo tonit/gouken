@@ -19,21 +19,19 @@
 			<modules>
 				<module>pom</module>
 				<module>gouken-boot</module>
+                <module>gouken-kernel-macosx</module>
+                <module>gouken-kernel-android</module>
+                <module>gouken-kernel-webapp</module>
 			</modules>
 		</profile>
-		<profile>
-			<id>spice</id>
-			<modules>
-				<module>pom</module>
-				<module>gouken-configurator</module>
-				<module>gouken-spice-updatewatch</module>
-				<module>gouken-spice-web</module>
-			</modules>
-		</profile>
+		
 		<profile>
 			<id>drops</id>
 			<modules>
-                <module>gouken-embed-plugin</module>
+                <module>drops/gouken-embed-plugin</module>
+                <module>drops/gouken-configurator</module>
+				<module>drops/gouken-spice-updatewatch</module>
+				<module>drops/gouken-spice-web</module>
 				<!--
 					<module>drops/com.okidokiteam.gelix</module>
 				-->
