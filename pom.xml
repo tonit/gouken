@@ -18,7 +18,6 @@
 			</activation>
 			<modules>
 				<module>pom</module>
-				<module>gouken-embed-plugin</module>
 				<module>gouken-kernel</module>
 			</modules>
 		</profile>
@@ -34,6 +33,7 @@
 		<profile>
 			<id>drops</id>
 			<modules>
+                <module>gouken-embed-plugin</module>
 				<!--
 					<module>drops/com.okidokiteam.gelix</module>
 				-->
