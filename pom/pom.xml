@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>com.okidokiteam.gouken</groupId>
-	    <artifactId>gouken-reactor</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+        <artifactId>gouken-reactor</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
 
     <groupId>com.okidokiteam.gouken</groupId>
@@ -18,7 +18,12 @@
     <inceptionYear>2010</inceptionYear>
 
     <properties>
+        <ops4j.gpg.use-agent>false</ops4j.gpg.use-agent>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <namespace>com.okidokiteam.gouken</namespace>
+
         <dependency.version.mockito>1.8.1</dependency.version.mockito>
         <dependency.version.wicket>1.4.7</dependency.version.wicket>
 
