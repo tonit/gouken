@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.activity;
+package com.okidokiteam.gouken.macosx.activity;
 
-import com.okidokiteam.gouken.kernel.Command;
-import com.sun.akuma.Daemon;
+import com.okidokiteam.gouken.macosx.Command;
+import com.okidokiteam.gouken.macosx.RemoteVault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,35 +26,28 @@ import org.apache.commons.logging.LogFactory;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class RestartCommand implements Command
+public class StopCommand implements Command
 {
 
-    private static Log LOG = LogFactory.getLog( RestartCommand.class );
-    private StartCommand m_start;
-    private StopCommand m_stop;
+    private static Log LOG = LogFactory.getLog( StopCommand.class );
 
-    public RestartCommand( StartCommand start, StopCommand stop )
+    public StopCommand()
     {
-        m_start = start;
-        m_stop = stop;
-
     }
 
     public void execute()
     {
-        Daemon d = new Daemon();
-        if( !d.isDaemonized() )
-        {
-            m_stop.execute();
-        }
-
         try
         {
-
-            m_start.execute();
+            RemoteVault vault = new RemoteCommand().getRbc();
+            vault.stop();
+            LOG.info( "Stopped." );
         } catch( Exception e )
         {
-            LOG.info( "Framework is already stopped." );
+            LOG.info( "Framework is already stopped.", e );
         }
+
     }
+
+
 }

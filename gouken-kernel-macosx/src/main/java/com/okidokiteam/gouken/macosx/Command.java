@@ -15,24 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.activity;
+package com.okidokiteam.gouken.macosx;
 
 import java.util.Map;
-import com.okidokiteam.gouken.kernel.Command;
 
 /**
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class UnknownCommand implements Command
+public interface Command
 {
 
-    public UnknownCommand( Map<String, String> map )
-    {
-    }
-
-    public void execute()
-    {
-        throw new RuntimeException( "Try start | stop | restart | status" );
-    }
+    void execute();
 }

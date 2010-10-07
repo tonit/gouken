@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.activity;
+package com.okidokiteam.gouken.macosx.activity;
 
+import java.util.Map;
+import com.okidokiteam.gouken.macosx.Command;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import com.okidokiteam.gouken.kernel.Command;
-import com.okidokiteam.gouken.kernel.Vault;
 
 /**
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class StopCommand implements Command
+public class StatusCommand implements Command
 {
 
-    private static Log LOG = LogFactory.getLog( StopCommand.class );
+    private static Log LOG = LogFactory.getLog( StatusCommand.class );
 
-    public StopCommand()
+    public StatusCommand( Map<String, String> map )
     {
     }
 
@@ -39,16 +39,13 @@ public class StopCommand implements Command
     {
         try
         {
-            Vault vault = new RemoteCommand().getRbc();
-
-            vault.stop();
-            LOG.info( "Stopped." );
+            LOG.info( "Framework Status: " + (new RemoteCommand().getRbc()) != null ? "online" : "offine" );
         } catch( Exception e )
         {
-            LOG.info( "Framework is already stopped.", e );
+            LOG.info( "Framework is offline." );
+            LOG.warn( e );
+
         }
-
     }
-
 
 }

@@ -15,16 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel;
-
-import java.util.Map;
+package com.okidokiteam.gouken.macosx;
 
 /**
  * @author Toni Menzel
- * @since Mar 4, 2010
+ * @since Mar 1, 2010
  */
-public interface Command
+public class Main
 {
 
-    void execute();
+    public static void main( String[] args )
+        throws Exception
+    {
+        new CommandController().mapCommand( args ).execute();
+    }
+
+
 }

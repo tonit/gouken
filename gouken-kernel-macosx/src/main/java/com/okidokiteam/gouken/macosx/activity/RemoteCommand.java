@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.activity;
+package com.okidokiteam.gouken.macosx.activity;
 
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import com.okidokiteam.gouken.kernel.Vault;
+import com.okidokiteam.gouken.macosx.RemoteVault;
 
 /**
  * @author Toni Menzel
@@ -34,7 +34,7 @@ public class RemoteCommand
     private static final long WAIT_FOREVER = 0;
     private long m_timeout = 2000;
 
-    public Vault getRbc()
+    public RemoteVault getRbc()
     {
         int port = getPort();
         long startedTrying = System.currentTimeMillis();
@@ -59,7 +59,7 @@ public class RemoteCommand
             {
                 try
                 {
-                    return (Vault) registry.lookup( Vault.class.getName() );
+                    return (RemoteVault) registry.lookup( RemoteVault.class.getName() );
                 }
                 catch( ConnectException e )
                 {

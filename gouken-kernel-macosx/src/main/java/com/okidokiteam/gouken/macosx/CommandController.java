@@ -15,17 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel;
+package com.okidokiteam.gouken.macosx;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.okidokiteam.gouken.kernel.activity.RestartCommand;
-import com.okidokiteam.gouken.kernel.activity.StartCommand;
-import com.okidokiteam.gouken.kernel.activity.StatusCommand;
-import com.okidokiteam.gouken.kernel.activity.UnknownCommand;
+import com.okidokiteam.gouken.macosx.activity.RestartCommand;
+import com.okidokiteam.gouken.macosx.activity.StartCommand;
+import com.okidokiteam.gouken.macosx.activity.StatusCommand;
+import com.okidokiteam.gouken.macosx.activity.UnknownCommand;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import com.okidokiteam.gouken.kernel.activity.StopCommand;
+import com.okidokiteam.gouken.macosx.activity.StopCommand;
 
 /**
  * @author Toni Menzel

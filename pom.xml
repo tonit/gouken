@@ -18,6 +18,7 @@
 			</activation>
 			<modules>
 				<module>pom</module>
+                <module>gouken-api</module>                              
 				<module>gouken-boot</module>
                 <module>gouken-kernel-macosx</module>
                 <module>gouken-kernel-android</module>

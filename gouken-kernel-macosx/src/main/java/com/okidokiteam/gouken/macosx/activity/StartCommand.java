@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.activity;
+package com.okidokiteam.gouken.macosx.activity;
 
 import java.util.Map;
-import com.okidokiteam.gouken.kernel.Command;
-import com.okidokiteam.gouken.kernel.TDaemon;
 import com.okidokiteam.gouken.kernel.VaultBoot;
+import com.okidokiteam.gouken.macosx.Command;
+import com.okidokiteam.gouken.macosx.MacOSBoot;
+import com.okidokiteam.gouken.macosx.TDaemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import com.okidokiteam.gouken.kernel.Main;
 
 /**
  * @author Toni Menzel
@@ -32,7 +32,7 @@ import com.okidokiteam.gouken.kernel.Main;
 public class StartCommand implements Command
 {
 
-    private static Log LOG = LogFactory.getLog( Main.class );
+    private static Log LOG = LogFactory.getLog( StartCommand.class );
     private Map<String, String> m_map;
     private static final String DEFAULT_TARGET = ".gouken";
 
@@ -53,7 +53,7 @@ public class StartCommand implements Command
             {
                 daemonize = false;
             }
-            VaultBoot boot = new VaultBoot( new TDaemon( daemonize ), m_map );
+            MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ),new VaultBoot( m_map ) );
             boot.init();
             boot.start();
         } catch( Throwable e )
