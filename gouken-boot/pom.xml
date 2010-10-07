@@ -15,7 +15,7 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <name>okidokiteam gouken - Boot Implementation</name>
+    <name>gouken - Boot Implementation</name>
 
     <properties>
         <bundle.symbolicName>${namespace}.kernel</bundle.symbolicName>

@@ -14,7 +14,7 @@
     <artifactId>gouken-kernel-macosx</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
-    <name>okidokiteam gouken - Kernel for MacOSX</name>
+    <name>gouken - Kernel for MacOSX</name>
 
 
     <dependencies>

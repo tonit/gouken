@@ -14,7 +14,7 @@
     <artifactId>gouken-kernel-webapp</artifactId>
     <version>0.1.0-SNAPSHOT</version>
    
-    <name>okidokiteam gouken - Kernel for Servlet Containers</name>
+    <name>gouken - Kernel for Servlet Containers</name>
 
 
     <dependencies>

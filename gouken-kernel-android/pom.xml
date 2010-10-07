@@ -14,7 +14,7 @@
     <artifactId>gouken-kernel-android</artifactId>
     <version>0.1.0-SNAPSHOT</version>
    
-    <name>okidokiteam gouken - Kernel for Android</name>   
+    <name>gouken - Kernel for Android</name>   
 
 
     <dependencies>
