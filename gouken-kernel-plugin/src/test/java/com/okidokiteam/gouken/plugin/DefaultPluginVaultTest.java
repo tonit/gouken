@@ -22,7 +22,6 @@ import com.okidokiteam.gouken.plugin.bridge.MyService;
 import com.okidokiteam.gouken.plugin.intern.DefaultVaultPluginPoint;
 import org.junit.Test;
 import org.ops4j.pax.repository.AetherResolver;
-import org.ops4j.pax.repository.RepositoryResolver;
 
 /**
  *
@@ -36,7 +35,7 @@ public class DefaultPluginVaultTest
     {
 
         // Prepare a Builder that uses broad aether based repository.
-        JavaVaultFactory builder = new JavaVaultFactory( new AetherResolver() );
+        PluginVaultBuilder builder = new PluginVaultBuilder( new AetherResolver() );
 
         PluginVault vault = builder.create(
             new DefaultVaultPluginPoint<MyService>( MyService.class )

@@ -34,7 +34,7 @@ import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
  *
  * Uses default resources and settings. This may be replaced to match user specifics.
  */
-public class JavaVaultFactory
+public class PluginVaultBuilder
 {
 
     private static final String[] DEFAULT_MA_BUNDLES = {
@@ -44,7 +44,7 @@ public class JavaVaultFactory
 
     private final RepositoryResolver m_repo;
 
-    public JavaVaultFactory(RepositoryResolver resolver)
+    public PluginVaultBuilder(RepositoryResolver resolver)
         throws KernelException
     {
       
