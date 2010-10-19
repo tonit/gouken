@@ -18,14 +18,18 @@
 package com.okidokiteam.gouken.kernel;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.RemoteException;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
@@ -35,6 +39,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.ops4j.pax.repository.Artifact;
 
 /**
  * @author Toni Menzel
@@ -50,8 +55,6 @@ public class VaultBoot implements Vault
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
-
-    private File m_liveFolder;
 
     public VaultBoot( VaultConfiguration configuration )
     {
@@ -85,7 +88,7 @@ public class VaultBoot implements Vault
     }
 
     public synchronized VaultHandle start()
-        throws KernelWorkflowException
+        throws KernelWorkflowException, KernelException
     {
         if( isRunning() )
         {
@@ -119,9 +122,10 @@ public class VaultBoot implements Vault
             Thread.currentThread().setContextClassLoader( parent );
         } catch( Exception e )
         {
-            e.printStackTrace();
             // kind of a clean the mess up..
             tryShutdown();
+            throw new KernelException( "Problem starting the Vault", e );
+
         } finally
         {
             if( parent != null )
@@ -136,23 +140,35 @@ public class VaultBoot implements Vault
     }
 
     private void loadAndStartFramework( Map<String, String> p )
-        throws BundleException
+        throws BundleException, IOException
     {
         FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
         m_framework = factory.newFramework( p );
-
         m_framework.init();
 
-        LOG.info( "Phase 1 done: Initialized OSGi container." );
         BundleContext context = m_framework.getBundleContext();
-        // TODO install management agent.
+
+        installBundles( context, m_configuration.getSystemBundles() );
         m_framework.start();
-        startBundles( context );
+        startBundles( context.getBundles() );
+
     }
 
-    private void startBundles( BundleContext context )
+    private Bundle[] installBundles( BundleContext ctx, Artifact... artifacts )
+        throws IOException, BundleException
     {
-        for( Bundle b : context.getBundles() )
+        List<Bundle> bundles = new ArrayList<Bundle>( artifacts.length );
+        for( Artifact artifact : artifacts )
+        {
+            LOG.info( "Installing " + artifact.getName() );
+            bundles.add( ctx.installBundle( artifact.getName(), artifact.getContent().get() ) );
+        }
+        return bundles.toArray( new Bundle[ bundles.size() ] );
+    }
+
+    private void startBundles( Bundle... bundles )
+    {
+        for( Bundle b : bundles )
         {
             try
             {

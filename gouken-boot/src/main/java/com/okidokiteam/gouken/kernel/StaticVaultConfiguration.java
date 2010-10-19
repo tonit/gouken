@@ -16,26 +16,32 @@
 package com.okidokiteam.gouken.kernel;
 
 import java.io.File;
+import com.okidokiteam.gouken.VaultConfiguration;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.repository.Artifact;
 
 /**
  *
  */
-public class VaultConfiguration
+public class StaticVaultConfiguration implements VaultConfiguration
 {
 
     private static final String WORK = "target/.gouken/";
 
-    private File m_workDir;
+    private final File m_workDir;
 
-    public VaultConfiguration( boolean clean )
+    private Artifact[] m_bundles;
+
+    public StaticVaultConfiguration( boolean clean, Artifact[] bundles )
     {
-        this( new File( WORK ), clean );
+        this( new File( WORK ), clean, bundles );
     }
 
-    public VaultConfiguration( File workDir, boolean clean )
+    public StaticVaultConfiguration( File workDir, boolean clean, Artifact[] bundles )
     {
         m_workDir = workDir;
+
+        m_bundles = bundles;
 
         if( clean )
         {
@@ -45,11 +51,18 @@ public class VaultConfiguration
     }
 
     /**
-     * The uppper most work folder. Will contain cache stuff and other operational files.
-     * No need to back this up.
+     * {@inheritDoc}
      */
     public File getWorkDir()
     {
         return m_workDir;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Artifact[] getSystemBundles()
+    {
+        return m_bundles;
     }
 }

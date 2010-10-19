@@ -15,10 +15,16 @@
  */
 package com.okidokiteam.gouken;
 
+import java.net.URISyntaxException;
+
 /**
  * High Level Exception
  */
 public class KernelException extends Exception
 {
 
+    public KernelException( String message, Exception e )
+    {
+        super( message, e );
+    }
 }

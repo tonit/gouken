@@ -18,13 +18,14 @@
 package com.okidokiteam.gouken.macosx.activity;
 
 import java.util.Map;
+import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
 import com.okidokiteam.gouken.kernel.VaultBoot;
-import com.okidokiteam.gouken.kernel.VaultConfiguration;
 import com.okidokiteam.gouken.macosx.Command;
 import com.okidokiteam.gouken.macosx.MacOSBoot;
 import com.okidokiteam.gouken.macosx.TDaemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ops4j.pax.repository.Artifact;
 
 /**
  * @author Toni Menzel
@@ -54,7 +55,7 @@ public class StartCommand implements Command
             {
                 daemonize = false;
             }
-            VaultConfiguration conf = new VaultConfiguration( true );
+            StaticVaultConfiguration conf = new StaticVaultConfiguration( true, new Artifact[ 0 ] );
             MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ), new VaultBoot( conf ) );
             boot.init();
             boot.start();
