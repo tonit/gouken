@@ -19,6 +19,7 @@ package com.okidokiteam.gouken.macosx.activity;
 
 import java.util.Map;
 import com.okidokiteam.gouken.kernel.VaultBoot;
+import com.okidokiteam.gouken.kernel.VaultConfiguration;
 import com.okidokiteam.gouken.macosx.Command;
 import com.okidokiteam.gouken.macosx.MacOSBoot;
 import com.okidokiteam.gouken.macosx.TDaemon;
@@ -53,7 +54,8 @@ public class StartCommand implements Command
             {
                 daemonize = false;
             }
-            MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ),new VaultBoot( m_map ) );
+            VaultConfiguration conf = new VaultConfiguration( true );
+            MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ), new VaultBoot( conf ) );
             boot.init();
             boot.start();
         } catch( Throwable e )

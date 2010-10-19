@@ -20,7 +20,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import com.okidokiteam.gouken.KernelException;
+import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +47,7 @@ public class MacOSBoot implements RemoteVault
     {
         m_daemon = d;
         m_vault = vault;
-        m_folder = new File(""); // TODO foo
+        m_folder = new File( "" ); // TODO foo
     }
 
     public void init()
@@ -94,7 +96,7 @@ public class MacOSBoot implements RemoteVault
         return new File( m_folder, WORK );
     }
 
-    public synchronized void stop()
+    public synchronized void stop( VaultHandle handle )
         throws KernelException
     {
         try
@@ -119,16 +121,17 @@ public class MacOSBoot implements RemoteVault
         }
     }
 
-
-
-    public synchronized void start()
-        throws KernelException
+    public synchronized VaultHandle start()
+        throws KernelException, KernelWorkflowException
     {
-        m_vault.start();
-        bind();
+        // make a RMI Handle:
+
+        VaultHandle handle = m_vault.start();
+        bind( handle );
+        return handle;
     }
 
-    private void installShutdownHook()
+    private void installShutdownHook( final VaultHandle handle )
     {
 
         Runtime.getRuntime().addShutdownHook( new Thread()
@@ -138,7 +141,7 @@ public class MacOSBoot implements RemoteVault
             {
                 try
                 {
-                    m_vault.stop();
+                    m_vault.stop( handle );
                 } catch( Exception e )
                 {
                     e.printStackTrace();
@@ -148,8 +151,7 @@ public class MacOSBoot implements RemoteVault
         );
     }
 
-
-    private void bind()
+    private void bind( VaultHandle handle )
     {
         try
         {

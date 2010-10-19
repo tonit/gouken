@@ -18,19 +18,15 @@
 package com.okidokiteam.gouken.kernel;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 import com.okidokiteam.gouken.KernelException;
+import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +35,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.ops4j.io.FileUtils;
 
 /**
  * @author Toni Menzel
@@ -49,40 +44,21 @@ public class VaultBoot implements Vault
 {
 
     private static Log LOG = LogFactory.getLog( VaultBoot.class );
+    private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
 
-    private static final String WORK = ".gouken";
-
-    private final File m_folder;
+    private final VaultConfiguration m_configuration;
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
 
     private File m_liveFolder;
 
-    public VaultBoot( Map<String, String> map )
+    public VaultBoot( VaultConfiguration configuration )
     {
-        String t = map.get( "--target" );
-        if( t == null )
-        {
-            t = ".";
-        }
-        File base = new File( t ).getAbsoluteFile();
-        String live = map.get( "--live" );
-        if( live != null )
-        {
-            m_liveFolder = new File( base, live );
-            LOG.info( "Live folder: " + m_liveFolder.getAbsolutePath() );
-        }
-
-        m_folder = base.getAbsoluteFile();
+        m_configuration = configuration;
     }
 
-    private File getWorkDir()
-    {
-        return new File( m_folder, WORK );
-    }
-
-    public synchronized void stop()
+    public synchronized void stop( VaultHandle handle )
         throws KernelException
     {
         try
@@ -96,7 +72,6 @@ public class VaultBoot implements Vault
                 m_framework = null;
             }
 
-            FileUtils.delete( getWorkDir() );
             System.gc();
 
             LOG.info( "Shutdown complete." );
@@ -109,30 +84,19 @@ public class VaultBoot implements Vault
 
     }
 
-    public String status()
-        throws RemoteException
+    public synchronized VaultHandle start()
+        throws KernelWorkflowException
     {
-
-        if( m_framework == null )
+        if( isRunning() )
         {
-            return "Framework is not running. (instance is null).";
-
+            throw new KernelWorkflowException( "" );
         }
-        else
-        {
-            return "Framework is running.";
-        }
-    }
 
-    public synchronized void start()
-    {
-        // foo
-        getWorkDir().mkdirs();
-        installShutdownHook();
         ClassLoader parent = null;
         try
         {
-            InputStream ins = getClass().getResourceAsStream( "/META-INF/gouken/provisioning.properties" );
+            // come from specific kernel implementation..
+            InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
             Properties descriptor = new Properties();
             if( ins != null )
             {
@@ -140,8 +104,8 @@ public class VaultBoot implements Vault
             }
 
             final Map<String, String> p = new HashMap<String, String>();
-            File worker = new File( getWorkDir(), "framework" );
-            FileUtils.delete( worker );
+            File worker = new File( m_configuration.getWorkDir(), "framework" );
+
             p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
 
             for( Object key : descriptor.keySet() )
@@ -151,38 +115,12 @@ public class VaultBoot implements Vault
 
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
-
-            FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
-
-            m_framework = factory.newFramework( p );
-
-            m_framework.init();
-
-            LOG.info( "Phase 1 done: Initialized OSGi container." );
-            BundleContext context = m_framework.getBundleContext();
-
-            String bundles = descriptor.getProperty( "bundles" );
-            install( bundles, context );
-
-            m_framework.start();
-            for( Bundle b : m_framework.getBundleContext().getBundles() )
-            {
-                try
-                {
-                    b.start();
-                    LOG.debug( "Started: " + b.getSymbolicName() );
-                } catch( Exception e )
-                {
-                    LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
-
-                }
-            }
+            loadAndStartFramework( p );
             Thread.currentThread().setContextClassLoader( parent );
-            LOG.info( "Phase 2 done: Installed management bundles." );
-
         } catch( Exception e )
         {
             e.printStackTrace();
+            // kind of a clean the mess up..
             tryShutdown();
         } finally
         {
@@ -192,160 +130,40 @@ public class VaultBoot implements Vault
 
             }
         }
+        return new VaultHandle()
+        {
+        };
     }
 
-    private void installShutdownHook()
+    private void loadAndStartFramework( Map<String, String> p )
+        throws BundleException
     {
-        final VaultBoot vaultBoot = this;
+        FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
+        m_framework = factory.newFramework( p );
 
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    vaultBoot.stop();
-                } catch( KernelException e )
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-        );
+        m_framework.init();
+
+        LOG.info( "Phase 1 done: Initialized OSGi container." );
+        BundleContext context = m_framework.getBundleContext();
+        // TODO install management agent.
+        m_framework.start();
+        startBundles( context );
     }
 
-    private void install( String cp, BundleContext context )
-        throws IOException, BundleException
+    private void startBundles( BundleContext context )
     {
-        LOG.info( "Found initial provisioning descriptor.." );
-
-        if( cp != null )
-        {
-            for( String s : cp.split( "," ) )
-            {
-                if( s != null && !s.equals( "." ) )
-                {
-                    LOG.info( "+ " + s );
-
-                    // UpdateLocation: try to find corporating bundle locations
-                    String embeddedPath = "/META-INF/gouken/" + s;
-
-                    if( m_liveFolder != null )
-                    {
-
-                        URI path = findLocation( embeddedPath );
-                        if( path != null )
-                        {
-                            Bundle b = context.installBundle( path.toASCIIString(), path.toURL().openStream() );
-                        }
-                        else
-                        {
-                            Bundle b = context.installBundle( s, getClass().getResourceAsStream( embeddedPath ) );
-
-                        }
-                    }
-                    else
-                    {
-                        Bundle b = context.installBundle( s, getClass().getResourceAsStream( embeddedPath ) );
-                    }
-                }
-            }
-        }
-    }
-
-    private URI findLocation( String path )
-        throws IOException
-    {
-        // read in order to get matcher information:
-        Manifest man = getManifest( getClass().getResourceAsStream( path ) );
-        String bundleSymbolicName = getBundleSymbolicName( man );
-        URI location = findMatching( bundleSymbolicName );
-        if( location != null )
-        {
-            //   LOG.info( "Found live location: " + location.toASCIIString() + " for bundle " + bundleSymbolicName );
-            return location;
-        }
-        else
-        {
-            //     LOG.info( "No live location found for " + bundleSymbolicName );
-        }
-        return null;
-    }
-
-    private Manifest getManifest( InputStream jar )
-    {
-        Manifest man = null;
-
-        JarInputStream jin = null;
-        try
-        {
-            jin = new JarInputStream( jar );
-            man = jin.getManifest();
-
-        } catch( IOException e )
-        {
-            // don't care
-        } finally
+        for( Bundle b : context.getBundles() )
         {
             try
             {
-                jin.close();
-            } catch( IOException e )
+                b.start();
+                LOG.debug( "Started: " + b.getSymbolicName() );
+            } catch( Exception e )
             {
+                LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
 
             }
         }
-        return man;
-    }
-
-    private URI findMatching( String bundleSymbolicName )
-        throws FileNotFoundException
-    {
-        // traverse folder in order to locate a matching bundle:
-        return findMatching( m_liveFolder, bundleSymbolicName );
-
-    }
-
-    private URI findMatching( File folder, String bundleSymbolicName )
-        throws FileNotFoundException
-    {
-        for( File f : folder.listFiles() )
-        {
-            if( f.isDirectory() && !f.isHidden() && !f.getName().startsWith( "." ) && !f.getName().equals( "classes" ) )
-            {
-                URI res = findMatching( f, bundleSymbolicName );
-                if( res != null )
-                {
-                    return res;
-                }
-            }
-            else
-            {
-                if( f.getName().endsWith( ".jar" ) )
-                {
-                    try
-                    {
-                        Manifest man = getManifest( new FileInputStream( f ) );
-                        String sym = getBundleSymbolicName( man );
-                        if( sym != null && sym.equals( bundleSymbolicName ) )
-                        {
-                            // found !
-                            return f.toURI();
-                        }
-                    } catch( IOException ioE )
-                    {
-
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private String getBundleSymbolicName( Manifest man )
-    {
-        return man.getMainAttributes().getValue( "Bundle-SymbolicName" );
     }
 
     private void tryShutdown()
@@ -363,4 +181,8 @@ public class VaultBoot implements Vault
         }
     }
 
+    public boolean isRunning()
+    {
+        return ( m_framework != null );
+    }
 }

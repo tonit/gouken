@@ -1,9 +1,9 @@
 <component-set>
     <components>
         <component>
-            <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+            <role>org.apache.maven.lifecycle.pointDefaultVault.LifecycleMapping</role>
             <role-hint>gouken</role-hint>
-            <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+            <implementation>org.apache.maven.lifecycle.pointDefaultVault.DefaultLifecycleMapping</implementation>
             <configuration>
                 <lifecycles>
                     <lifecycle>

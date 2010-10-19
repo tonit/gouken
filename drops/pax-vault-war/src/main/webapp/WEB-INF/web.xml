@@ -12,10 +12,10 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet-mapping>
+    <servlet-pointDefaultVault>
         <servlet-name>proxy</servlet-name>
         <url-pattern>/vault/*</url-pattern>
-    </servlet-mapping>
+    </servlet-pointDefaultVault>
 
     <listener>
         <listener-class>org.ops4j.pax.vault.web.VaultListener</listener-class>
@@ -31,9 +31,9 @@
         </init-param>
     </filter>
 
-    <filter-mapping>
+    <filter-pointDefaultVault>
         <filter-name>org.ops4j.pax.vault</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-pointDefaultVault>
 
 </web-app>
