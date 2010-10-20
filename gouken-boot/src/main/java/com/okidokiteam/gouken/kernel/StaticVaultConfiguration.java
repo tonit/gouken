@@ -32,16 +32,18 @@ public class StaticVaultConfiguration implements VaultConfiguration
 
     private Artifact[] m_bundles;
 
-    public StaticVaultConfiguration( boolean clean, Artifact[] bundles )
+    public StaticVaultConfiguration( boolean clean, Artifact[] bundles, String... properties )
     {
-        this( new File( WORK ), clean, bundles );
+        this( new File( WORK ), clean, bundles, properties );
     }
 
-    public StaticVaultConfiguration( File workDir, boolean clean, Artifact[] bundles )
+    public StaticVaultConfiguration( File workDir, boolean clean, Artifact[] bundles, String... properties )
     {
         m_workDir = workDir;
 
         m_bundles = bundles;
+
+        
 
         if( clean )
         {

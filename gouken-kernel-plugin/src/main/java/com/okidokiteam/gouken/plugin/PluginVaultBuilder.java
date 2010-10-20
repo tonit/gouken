@@ -39,7 +39,8 @@ public class PluginVaultBuilder
 
     private static final String[] DEFAULT_MA_BUNDLES = {
         "org.ops4j.pax.exam:pax-exam-container-rbc:2.0.0-SNAPSHOT",
-        "org.ops4j.pax.exam:pax-exam-spi:2.0.0-SNAPSHOT"
+        "org.ops4j.pax.exam:pax-exam-spi:2.0.0-SNAPSHOT",
+        "org.apache.felix:org.apache.felix.fileinstall:1.0.0"
     };
 
     private final RepositoryResolver m_repo;
@@ -58,7 +59,10 @@ public class PluginVaultBuilder
         Vault vault;
         try
         {
-            vault = new VaultBoot( new StaticVaultConfiguration( true, getDefaultBundles() ) );
+            vault = new VaultBoot( new StaticVaultConfiguration( true,
+                                                                 getDefaultBundles(),
+                                                                 "fileinstall.poll=300",
+                                                                 "org.ops4j.pax.exam.port=9000") );
         } catch( RepositoryException e )
         {
             throw new KernelException( "Underlying Repository for MA Bundles has a problem.", e );

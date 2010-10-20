@@ -12,19 +12,18 @@ public interface PluginVault extends Vault
 {
 
     /**
-     * Get plugin points that might have services installed.
-     */
-    VaultPluginPoint[] getPluginPoints();
-
-    /**
      * Get notified when plugins are being activated or deactivated.
+     * Already active callbacks will be delivered uppon registration.
+     * Its some kind of "post callback registration event mechanism".
+     * Because of this you can use callbacks anytime and never lose a service.
      *
-     * @param callbacks
+     * @param callbacks to be registered.
      */
     void registerCallbacks( PluginCallback... callbacks );
 
     /**
-     * @param callbacks
+     * Remove this callback from the notification recipient list.
+     * @param callbacks to be removed.
      */
     void unregisterCallbacks( PluginCallback... callbacks );
 }
