@@ -22,6 +22,11 @@
             <artifactId>gouken-boot</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-tinybundles</artifactId>
+            <version>1.3.0</version>
+        </dependency>
     </dependencies>
-    
+
 </project>

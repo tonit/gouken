@@ -15,12 +15,12 @@
  */
 package com.okidokiteam.gouken.plugin;
 
-import java.util.List;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.VaultHandle;
 import com.okidokiteam.gouken.plugin.bridge.MyService;
 import com.okidokiteam.gouken.plugin.intern.DefaultVaultPluginPoint;
+import com.okidokiteam.gouken.plugin.remotes.LocalPluginRemote;
 import org.junit.Test;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
 
@@ -32,6 +32,7 @@ import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 public class DefaultPluginVaultTest
 {
 
+    // TODO future feature to allow for seamless service usage without manual callbacks.
     //@Inject private volatile VaultPluginPoint<MyService> services;
 
     @Test
@@ -63,11 +64,9 @@ public class DefaultPluginVaultTest
         }
         );
 
-        // Inject services
-        new Injection<MyService>().inject( vault, this );
 
         // do install plugins via Gouken Remote Plugin Control API
-        PluginRemote remote = new LocalPluginRemote();
+        PluginRemote remote = new LocalPluginRemote( handle );
 
 
 

@@ -13,27 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.plugin;
+package com.okidokiteam.gouken.plugin.remotes;
 
+import com.okidokiteam.gouken.VaultHandle;
+import com.okidokiteam.gouken.plugin.PluginRemote;
 import org.ops4j.pax.repository.ArtifactIdentifier;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: 10/19/10
- * Time: 9:23 PM
- * To change this template use File | Settings | File Templates.
+ * Local instrumentation without actually having a real management agent installed inside the vault.
  */
 public class LocalPluginRemote implements PluginRemote
 {
 
+    public LocalPluginRemote( VaultHandle handle )
+    {
+        
+    }
+
     public void install( ArtifactIdentifier identifier )
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     public void uninstall( ArtifactIdentifier identifier )
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 }

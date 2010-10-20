@@ -40,6 +40,7 @@ public class DefaultPluginVault implements PluginVault
     {
         m_vaultPluginPoints = Arrays.asList( pluginPoints );
         m_vault = vault;
+        
         m_callbacks = new ArrayList<PluginCallback>();
     }
 
@@ -53,11 +54,6 @@ public class DefaultPluginVault implements PluginVault
         throws KernelException, KernelWorkflowException
     {
         m_vault.stop( handle );
-    }
-
-    public VaultPluginPoint[] getPluginPoints()
-    {
-        return m_vaultPluginPoints.toArray( new VaultPluginPoint[ m_vaultPluginPoints.size() ] );
     }
 
     public void registerCallbacks( PluginCallback... callbacks )

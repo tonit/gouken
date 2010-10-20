@@ -20,6 +20,8 @@ package com.okidokiteam.gouken;
  * Clients usually need this handle in order to interact with a vault.
  * Can be invalidated when vault has been stopped already.
  * In that case the Handle is of no use anymore.
+ *
+ * You need this handle in order to authenticate yourself when obtaining a PluginRemote for example.
  */
 public interface VaultHandle
 {
