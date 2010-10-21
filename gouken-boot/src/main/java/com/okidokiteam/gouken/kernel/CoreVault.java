@@ -60,32 +60,6 @@ public class CoreVault implements Vault
         m_configuration = configuration;
     }
 
-    public synchronized void stop( VaultHandle handle )
-        throws KernelException
-    {
-        try
-        {
-            LOG.info( "Stop hook triggered." );
-            if( m_framework != null )
-            {
-                BundleContext ctx = m_framework.getBundleContext();
-                Bundle systemBundle = ctx.getBundle( 0 );
-                systemBundle.stop();
-                m_framework = null;
-            }
-
-            System.gc();
-
-            LOG.info( "Shutdown complete." );
-
-
-        } catch( BundleException e )
-        {
-            LOG.error( "Problem stopping framework.", e );
-        }
-
-    }
-
     public synchronized VaultHandle start()
         throws KernelWorkflowException, KernelException
     {
@@ -136,6 +110,32 @@ public class CoreVault implements Vault
         return new VaultHandle()
         {
         };
+    }
+
+    public synchronized void stop( VaultHandle handle )
+        throws KernelException
+    {
+        try
+        {
+            LOG.info( "Stop hook triggered." );
+            if( m_framework != null )
+            {
+                BundleContext ctx = m_framework.getBundleContext();
+                Bundle systemBundle = ctx.getBundle( 0 );
+                systemBundle.stop();
+                m_framework = null;
+            }
+
+            System.gc();
+
+            LOG.info( "Shutdown complete." );
+
+
+        } catch( BundleException e )
+        {
+            LOG.error( "Problem stopping framework.", e );
+        }
+
     }
 
     private void loadAndStartFramework( Map<String, String> p )
