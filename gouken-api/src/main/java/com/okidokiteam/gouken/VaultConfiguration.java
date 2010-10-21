@@ -11,6 +11,7 @@ public interface VaultConfiguration
 {
 
     /**
+     * @return Artifacts
      */
     public Artifact[] getArtifacts();
 }
