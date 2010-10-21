@@ -41,6 +41,10 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.pax.repository.Artifact;
 
 /**
+ * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
+ *
+ * Beyond this, we should not have the notion of osgi other than DeploymentPackages. (also with another name as we probably just want a subset of that spec).
+ *
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
