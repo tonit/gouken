@@ -39,6 +39,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.RepositoryException;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
@@ -118,6 +119,12 @@ public class CoreVault implements Vault
         };
     }
 
+    public void update( VaultConfiguration configuration )
+        throws KernelException
+    {
+        // TODO
+    }
+
     public synchronized void stop( VaultHandle handle )
         throws KernelException
     {
@@ -145,7 +152,7 @@ public class CoreVault implements Vault
     }
 
     private void loadAndStartFramework( Map<String, String> p )
-        throws BundleException, IOException
+        throws BundleException, IOException, RepositoryException
     {
         FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
         m_framework = factory.newFramework( p );
@@ -160,7 +167,7 @@ public class CoreVault implements Vault
     }
 
     private Bundle[] installBundles( BundleContext ctx, Artifact... artifacts )
-        throws IOException, BundleException
+        throws IOException, BundleException, RepositoryException
     {
         List<Bundle> bundles = new ArrayList<Bundle>( artifacts.length );
         for( Artifact artifact : artifacts )

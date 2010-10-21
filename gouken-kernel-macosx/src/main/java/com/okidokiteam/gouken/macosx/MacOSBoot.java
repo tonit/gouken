@@ -22,6 +22,7 @@ import java.rmi.server.UnicastRemoteObject;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -129,6 +130,12 @@ public class MacOSBoot implements RemoteVault
         VaultHandle handle = m_vault.start();
         bind( handle );
         return handle;
+    }
+
+    public void update( VaultConfiguration configuration )
+        throws KernelException
+    {
+        // TODO implement
     }
 
     private void installShutdownHook( final VaultHandle handle )

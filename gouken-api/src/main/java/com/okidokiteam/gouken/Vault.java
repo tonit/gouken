@@ -25,6 +25,14 @@ public interface Vault
         throws KernelWorkflowException, KernelException;
 
     /**
+     * @param configuration configuration you want to issue to the vault.
+     *
+     * @throws KernelException in case of a problem
+     */
+    void update( VaultConfiguration configuration )
+        throws KernelException;
+
+    /**
      * Stops a vault. Also invalidates
      *
      * @param handle that has been derived when starting the vault.

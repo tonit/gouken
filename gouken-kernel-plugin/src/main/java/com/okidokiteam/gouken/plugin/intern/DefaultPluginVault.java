@@ -21,6 +21,7 @@ import java.util.List;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
 import com.okidokiteam.gouken.plugin.PluginCallback;
 import com.okidokiteam.gouken.plugin.PluginVault;
@@ -40,7 +41,7 @@ public class DefaultPluginVault implements PluginVault
     {
         m_vaultPluginPoints = Arrays.asList( pluginPoints );
         m_vault = vault;
-        
+
         m_callbacks = new ArrayList<PluginCallback>();
     }
 
@@ -48,6 +49,13 @@ public class DefaultPluginVault implements PluginVault
         throws KernelException, KernelWorkflowException
     {
         return m_vault.start();
+    }
+
+    public void update( VaultConfiguration configuration )
+        throws KernelException
+    {
+        // TODO hang in here to check for valid config on this enviromment, annotated/transform, and finally pass to vault.
+        m_vault.update( configuration );
     }
 
     public void stop( VaultHandle handle )
