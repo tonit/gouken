@@ -66,11 +66,12 @@ public class PluginVaultBuilder
 
             workDir.mkdirs();
 
-            vault = new CoreVault( new StaticVaultConfiguration(
-                getDefaultBundles(),
-                "fileinstall.poll=300",
-                "org.ops4j.pax.exam.port=9000"
-            ), workDir
+            vault = new CoreVault(
+                new StaticVaultConfiguration(
+                    resolveLazy( m_repo, DEFAULT_MA_BUNDLES ),
+                    "fileinstall.poll=300",
+                    "org.ops4j.pax.exam.port=9000"
+                ), workDir
             );
         } catch( RepositoryException e )
         {
@@ -78,18 +79,6 @@ public class PluginVaultBuilder
         }
 
         return new DefaultPluginVault( vault, pointDefaultVault );
-    }
-
-    private Artifact[] getDefaultBundles()
-        throws RepositoryException
-    {
-        List<Artifact> list = new ArrayList<Artifact>();
-        for( String bundle : DEFAULT_MA_BUNDLES )
-        {
-            list.add( m_repo.find( parseFromURL( bundle ) ) );
-
-        }
-        return list.toArray( new Artifact[ list.size() ] );
     }
 
 }
