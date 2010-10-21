@@ -20,7 +20,6 @@ package com.okidokiteam.gouken.kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +44,10 @@ import org.ops4j.pax.repository.Artifact;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class VaultBoot implements Vault
+public class CoreVault implements Vault
 {
 
-    private static Log LOG = LogFactory.getLog( VaultBoot.class );
+    private static Log LOG = LogFactory.getLog( CoreVault.class );
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
 
     private final VaultConfiguration m_configuration;
@@ -56,7 +55,7 @@ public class VaultBoot implements Vault
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
 
-    public VaultBoot( VaultConfiguration configuration )
+    public CoreVault( VaultConfiguration configuration )
     {
         m_configuration = configuration;
     }

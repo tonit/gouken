@@ -19,10 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
-import com.okidokiteam.gouken.kernel.VaultBoot;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
-import org.ops4j.pax.repository.AetherResolver;
 import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
@@ -59,7 +58,7 @@ public class PluginVaultBuilder
         Vault vault;
         try
         {
-            vault = new VaultBoot( new StaticVaultConfiguration( true,
+            vault = new CoreVault( new StaticVaultConfiguration( true,
                                                                  getDefaultBundles(),
                                                                  "fileinstall.poll=300",
                                                                  "org.ops4j.pax.exam.port=9000") );
