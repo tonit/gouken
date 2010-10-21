@@ -6,6 +6,9 @@ package com.okidokiteam.gouken;
  *
  * For example it does not allow installing single raw artifacts (bundles) or managing low level bundle lifecycle on a user level.
  * Instead, it delegates those types to a management agent installed.
+ * The ubstract notion for unit of deployment is {@link com.okidokiteam.gouken.VaultConfiguration} though its up to the vault implementation to accept, transform it.
+ * Also its up to the vault if it for example passes the content in configuration direclty to the technical framework (installing bundles) or issuing it to
+ * a real management agent like a DeploymentPackage based one.
  *
  * A vault can be started and stopped. Thats all. Upon startup you get a interaction handle that you can use to authenticate a trusted
  * management agent client.
