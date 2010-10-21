@@ -15,6 +15,7 @@
  */
 package com.okidokiteam.gouken.plugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.okidokiteam.gouken.KernelException;
@@ -22,6 +23,7 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
@@ -44,10 +46,10 @@ public class PluginVaultBuilder
 
     private final RepositoryResolver m_repo;
 
-    public PluginVaultBuilder(RepositoryResolver resolver)
+    public PluginVaultBuilder( RepositoryResolver resolver )
         throws KernelException
     {
-      
+
         m_repo = resolver;
 
     }
@@ -58,10 +60,18 @@ public class PluginVaultBuilder
         Vault vault;
         try
         {
-            vault = new CoreVault( new StaticVaultConfiguration( true,
-                                                                 getDefaultBundles(),
-                                                                 "fileinstall.poll=300",
-                                                                 "org.ops4j.pax.exam.port=9000") );
+            File workDir = new File( ".target/gouken" );
+
+            FileUtils.delete( workDir );
+
+            workDir.mkdirs();
+
+            vault = new CoreVault( new StaticVaultConfiguration(
+                getDefaultBundles(),
+                "fileinstall.poll=300",
+                "org.ops4j.pax.exam.port=9000"
+            ), workDir
+            );
         } catch( RepositoryException e )
         {
             throw new KernelException( "Underlying Repository for MA Bundles has a problem.", e );

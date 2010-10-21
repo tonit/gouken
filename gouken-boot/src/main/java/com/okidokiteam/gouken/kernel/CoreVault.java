@@ -58,10 +58,12 @@ public class CoreVault implements Vault
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
+    private File m_workDir;
 
-    public CoreVault( VaultConfiguration configuration )
+    public CoreVault( VaultConfiguration initialConfiguration, File workDir )
     {
-        m_configuration = configuration;
+        m_configuration = initialConfiguration;
+        m_workDir = workDir;
     }
 
     public synchronized VaultHandle start()
@@ -84,7 +86,7 @@ public class CoreVault implements Vault
             }
 
             final Map<String, String> p = new HashMap<String, String>();
-            File worker = new File( m_configuration.getWorkDir(), "framework" );
+            File worker = new File( m_workDir, "framework" );
 
             p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
 
@@ -151,7 +153,7 @@ public class CoreVault implements Vault
 
         BundleContext context = m_framework.getBundleContext();
 
-        installBundles( context, m_configuration.getSystemBundles() );
+        installBundles( context, m_configuration.getArtifacts() );
         m_framework.start();
         startBundles( context.getBundles() );
 

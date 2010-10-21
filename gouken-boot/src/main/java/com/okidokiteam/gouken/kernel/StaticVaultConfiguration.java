@@ -28,42 +28,19 @@ public class StaticVaultConfiguration implements VaultConfiguration
 
     private static final String WORK = "target/.gouken/";
 
-    private final File m_workDir;
-
     private Artifact[] m_bundles;
 
-    public StaticVaultConfiguration( boolean clean, Artifact[] bundles, String... properties )
+
+
+    public StaticVaultConfiguration( Artifact[] bundles, String... properties )
     {
-        this( new File( WORK ), clean, bundles, properties );
-    }
-
-    public StaticVaultConfiguration( File workDir, boolean clean, Artifact[] bundles, String... properties )
-    {
-        m_workDir = workDir;
-
-        m_bundles = bundles;
-
-        
-
-        if( clean )
-        {
-            FileUtils.delete( m_workDir );
-        }
-        getWorkDir().mkdirs();
+        m_bundles = bundles; 
     }
 
     /**
      * {@inheritDoc}
      */
-    public File getWorkDir()
-    {
-        return m_workDir;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Artifact[] getSystemBundles()
+    public Artifact[] getArtifacts()
     {
         return m_bundles;
     }

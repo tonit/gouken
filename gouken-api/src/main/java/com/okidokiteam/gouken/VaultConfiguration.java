@@ -1,22 +1,16 @@
 package com.okidokiteam.gouken;
 
-import java.io.File;
 import org.ops4j.pax.repository.Artifact;
 
 /**
- *
+ * Configuration of a desired vault. After issuing this to a vault, it will adapt that state.
+ * This is the only way to change the state of a vault.
+ * In the OSGi internals, this is very much like a DeploymentPackage.
  */
 public interface VaultConfiguration
 {
 
     /**
-     * @return The uppper most work folder. Will contain cache stuff and other operational files.
-     *         No need to back this up.
      */
-    public File getWorkDir();
-
-    /**
-     * @return Bundles that make up the management agent.
-     */
-    public Artifact[] getSystemBundles();
+    public Artifact[] getArtifacts();
 }
