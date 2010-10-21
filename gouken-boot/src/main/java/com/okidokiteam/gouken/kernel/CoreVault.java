@@ -43,8 +43,14 @@ import org.ops4j.pax.repository.RepositoryException;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
- *
  * Beyond this, we should not have the notion of osgi other than DeploymentPackages. (also with another name as we probably just want a subset of that spec).
+ *
+ * This Vault uses:
+ * - Apache Felix as underlying OSGi implementation
+ * - DeploymentAdmin from Felix as management agent implementation
+ * - Tinybundles to transfer update() into units recognizable by the DeploymentAdmin
+ *
+ * This makes the update mechanism dynamic (OSGi), atomic (DeploymentAdmin) and configuration agnostic (Tinybundles).
  *
  * @author Toni Menzel
  * @since Mar 4, 2010
@@ -72,34 +78,25 @@ public class CoreVault implements Vault
     {
         if( isRunning() )
         {
-            throw new KernelWorkflowException( "" );
+            throw new KernelWorkflowException( "Vault is already running." );
         }
 
         ClassLoader parent = null;
         try
         {
-            // come from specific kernel implementation..
-            InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
-            Properties descriptor = new Properties();
-            if( ins != null )
-            {
-                descriptor.load( ins );
-            }
-
-            final Map<String, String> p = new HashMap<String, String>();
-            File worker = new File( m_workDir, "framework" );
-
-            p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
-
-            for( Object key : descriptor.keySet() )
-            {
-                p.put( (String) key, descriptor.getProperty( (String) key ) );
-            }
-
+            final Map<String, String> p = getFrameworkConfig();
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
+
+            // Start sequence:
             loadAndStartFramework( p );
+            BundleContext context = m_framework.getBundleContext();
+
+            startBundles( context.getBundles() );
+
+            update( m_configuration );
             Thread.currentThread().setContextClassLoader( parent );
+
         } catch( Exception e )
         {
             // kind of a clean the mess up..
@@ -119,10 +116,42 @@ public class CoreVault implements Vault
         };
     }
 
+    private Map<String, String> getFrameworkConfig()
+        throws IOException
+    {
+        InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
+        Properties descriptor = new Properties();
+        if( ins != null )
+        {
+            descriptor.load( ins );
+        }
+
+        final Map<String, String> p = new HashMap<String, String>();
+        File worker = new File( m_workDir, "framework" );
+
+        p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
+
+        for( Object key : descriptor.keySet() )
+        {
+            p.put( (String) key, descriptor.getProperty( (String) key ) );
+        }
+        return p;
+    }
+
     public void update( VaultConfiguration configuration )
         throws KernelException
     {
-        // TODO
+        try
+        {
+            // create a deployment package and install
+
+            //installBundles( m_framework.getBundleContext(), configuration.getArtifacts() );
+        } catch( Exception e )
+        {
+            throw new KernelException( "Problem while update() using configuration: " + configuration, e );
+        }
+
+
     }
 
     public synchronized void stop( VaultHandle handle )
@@ -138,12 +167,8 @@ public class CoreVault implements Vault
                 systemBundle.stop();
                 m_framework = null;
             }
-
             System.gc();
-
             LOG.info( "Shutdown complete." );
-
-
         } catch( BundleException e )
         {
             LOG.error( "Problem stopping framework.", e );
@@ -152,17 +177,14 @@ public class CoreVault implements Vault
     }
 
     private void loadAndStartFramework( Map<String, String> p )
-        throws BundleException, IOException, RepositoryException
+        throws BundleException, IOException, RepositoryException, KernelException
     {
         FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
         m_framework = factory.newFramework( p );
         m_framework.init();
 
-        BundleContext context = m_framework.getBundleContext();
-
-        installBundles( context, m_configuration.getArtifacts() );
         m_framework.start();
-        startBundles( context.getBundles() );
+
 
     }
 
