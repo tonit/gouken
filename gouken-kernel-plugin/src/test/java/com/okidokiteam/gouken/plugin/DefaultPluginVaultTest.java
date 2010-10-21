@@ -70,7 +70,7 @@ public class DefaultPluginVaultTest
 
 
 
-        remote.install( parseFromURL( "" ) );
+       // remote.install( parseFromURL( "" ) );
 
         // now it must be possible to call + interact with those services in an extender pattern:
         //after a treshold..
