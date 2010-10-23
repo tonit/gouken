@@ -26,13 +26,9 @@ import org.ops4j.pax.repository.Artifact;
 public class StaticVaultConfiguration implements VaultConfiguration
 {
 
-    private static final String WORK = "target/.gouken/";
-
     private Artifact[] m_bundles;
 
-
-
-    public StaticVaultConfiguration( Artifact[] bundles, String... properties )
+    public StaticVaultConfiguration( Artifact[] bundles )
     {
         m_bundles = bundles; 
     }

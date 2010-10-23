@@ -39,18 +39,16 @@ public class PluginVaultBuilder
 {
 
     private static final String[] DEFAULT_MA_BUNDLES = {
-        "org.ops4j.pax.exam:pax-exam-container-rbc:2.0.0-SNAPSHOT",
-        "org.ops4j.pax.exam:pax-exam-spi:2.0.0-SNAPSHOT",
-        "org.apache.felix:org.apache.felix.fileinstall:1.0.0"
+        ""
     };
 
-    private final RepositoryResolver m_repo;
+    private final RepositoryResolver m_resolver;
 
     public PluginVaultBuilder( RepositoryResolver resolver )
         throws KernelException
     {
 
-        m_repo = resolver;
+        m_resolver = resolver;
 
     }
 
@@ -68,10 +66,10 @@ public class PluginVaultBuilder
 
             vault = new CoreVault(
                 new StaticVaultConfiguration(
-                    resolveLazy( m_repo, DEFAULT_MA_BUNDLES ),
-                    "fileinstall.poll=300",
-                    "org.ops4j.pax.exam.port=9000"
-                ), workDir
+                    resolveLazy( m_resolver )
+                ),
+                workDir,
+                m_resolver
             );
         } catch( RepositoryException e )
         {

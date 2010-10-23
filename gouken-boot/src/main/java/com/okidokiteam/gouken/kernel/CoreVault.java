@@ -38,8 +38,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.ArtifactIdentifier;
 import org.ops4j.pax.repository.RepositoryException;
+import org.ops4j.pax.repository.RepositoryResolver;
+
+import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
@@ -52,13 +58,17 @@ import org.ops4j.pax.repository.RepositoryException;
  *
  * This makes the update mechanism dynamic (OSGi), atomic (DeploymentAdmin) and configuration agnostic (Tinybundles).
  *
+ * Because we deal with DP like Apache ACE does, we may or may not use the ACE MA here.
+ * Difference is that we just have ONE management agent with one single server.(plus one client).. all in this one vault.
+ * So we may make things simpler..
+ *
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
 public class CoreVault implements Vault
 {
 
-    private static Log LOG = LogFactory.getLog( CoreVault.class );
+    private static Logger LOG = LoggerFactory.getLogger( CoreVault.class );
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
 
     private final VaultConfiguration m_configuration;
@@ -66,11 +76,16 @@ public class CoreVault implements Vault
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
     private File m_workDir;
+    private RepositoryResolver m_resolver;
+    private static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
+    private static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
+    private static final String BUNDLE_COMP = "org.osgi:org.osgi.compendium:4.2.0";
 
-    public CoreVault( VaultConfiguration initialConfiguration, File workDir )
+    public CoreVault( VaultConfiguration initialConfiguration, File workDir, RepositoryResolver resolver )
     {
         m_configuration = initialConfiguration;
         m_workDir = workDir;
+        m_resolver = resolver;
     }
 
     public synchronized VaultHandle start()
@@ -91,6 +106,11 @@ public class CoreVault implements Vault
             // Start sequence:
             loadAndStartFramework( p );
             BundleContext context = m_framework.getBundleContext();
+
+            // install MA
+            install( context, parseFromURL( BUNDLE_DM ) );
+            install( context, parseFromURL( BUNDLE_COMP ) );
+            install( context, parseFromURL( BUNDLE_DEPLOYMENTADMIN ) );
 
             startBundles( context.getBundles() );
 
@@ -114,6 +134,12 @@ public class CoreVault implements Vault
         return new VaultHandle()
         {
         };
+    }
+
+    private void install( BundleContext context, ArtifactIdentifier artifact )
+        throws RepositoryException, IOException, BundleException
+    {
+        context.installBundle( artifact.getName(), m_resolver.find( artifact ).getContent().get() );
     }
 
     private Map<String, String> getFrameworkConfig()
@@ -207,7 +233,7 @@ public class CoreVault implements Vault
             try
             {
                 b.start();
-                LOG.debug( "Started: " + b.getSymbolicName() );
+                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getVersion());
             } catch( Exception e )
             {
                 LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
