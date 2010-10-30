@@ -37,8 +37,7 @@ public class StartCommand implements Command
 
     private static Log LOG = LogFactory.getLog( StartCommand.class );
     private Map<String, String> m_map;
-    private static final String DEFAULT_TARGET = ".gouken";
-
+ 
     public StartCommand( Map<String, String> map )
     {
         m_map = map;
@@ -58,7 +57,7 @@ public class StartCommand implements Command
             }
             StaticVaultConfiguration conf = new StaticVaultConfiguration( new Artifact[ 0 ] );
             // TODO adapt path to be clean and configable (just extracted out of config)
-            MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ), new CoreVault( conf, new File( "target" ) ) );
+            MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ), new CoreVault( conf, new File( "target" ),null ) );
             boot.init();
             boot.start();
         } catch( Throwable e )

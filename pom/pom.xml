@@ -23,19 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <namespace>com.okidokiteam.gouken</namespace>
-
         <dependency.version.mockito>1.8.1</dependency.version.mockito>
-        <dependency.version.wicket>1.4.7</dependency.version.wicket>
-
-        <dependency.version.dependencymanager>2.0.1</dependency.version.dependencymanager>
-
-        <dependency.version.eventadmin>1.0.0</dependency.version.eventadmin>
-        <dependency.version.configadmin>1.2.4</dependency.version.configadmin>
-        <dependency.version.deploymentadmin>0.9.0-SNAPSHOT</dependency.version.deploymentadmin>
-
-        <dependency.version.osgi.core>4.2.0</dependency.version.osgi.core>
-        <dependency.version.osgi.compendium>4.2.0</dependency.version.osgi.compendium>
-        <dependency.version.servletapi>2.4</dependency.version.servletapi>
     </properties>
 
 
@@ -130,76 +118,12 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>${dependency.version.osgi.core}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
-                <version>${dependency.version.osgi.compendium}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager</artifactId>
-                <version>${dependency.version.dependencymanager}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                <version>${dependency.version.dependencymanager}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.configadmin</artifactId>
-                <version>${dependency.version.configadmin}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.eventadmin</artifactId>
-                <version>${dependency.version.eventadmin}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.deploymentadmin</artifactId>
-                <version>${dependency.version.deploymentadmin}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${dependency.version.servletapi}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>1.6.2</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>kxml2</groupId>
-                <artifactId>kxml2</artifactId>
-                <version>2.3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.2.2</version>
-                <scope>provided</scope>
-            </dependency>
+      
             <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.4</version>
+                <version>4.8.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

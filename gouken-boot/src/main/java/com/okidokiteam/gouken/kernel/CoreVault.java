@@ -31,13 +31,16 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.felix.dm.Component;
+import org.apache.felix.dm.DependencyManager;
+import org.apache.felix.dm.ServiceDependency;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.osgi.service.deploymentadmin.DeploymentAdmin;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.repository.Artifact;
@@ -77,9 +80,9 @@ public class CoreVault implements Vault
     private volatile Framework m_framework;
     private File m_workDir;
     private RepositoryResolver m_resolver;
-    private static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
-    private static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
-    private static final String BUNDLE_COMP = "org.osgi:org.osgi.compendium:4.2.0";
+    public static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
+    public static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
+    public static final String BUNDLE_COMP = "org.osgi:org.osgi.compendium:4.2.0";
 
     public CoreVault( VaultConfiguration initialConfiguration, File workDir, RepositoryResolver resolver )
     {
@@ -91,6 +94,7 @@ public class CoreVault implements Vault
     public synchronized VaultHandle start()
         throws KernelWorkflowException, KernelException
     {
+
         if( isRunning() )
         {
             throw new KernelWorkflowException( "Vault is already running." );
@@ -108,11 +112,19 @@ public class CoreVault implements Vault
             BundleContext context = m_framework.getBundleContext();
 
             // install MA
-            install( context, parseFromURL( BUNDLE_DM ) );
-            install( context, parseFromURL( BUNDLE_COMP ) );
-            install( context, parseFromURL( BUNDLE_DEPLOYMENTADMIN ) );
+            install( context, BUNDLE_DM, BUNDLE_COMP, BUNDLE_DEPLOYMENTADMIN );
+            Thread.sleep( 1000 );
 
             startBundles( context.getBundles() );
+
+
+            BridgedService<DeploymentAdmin> bridge = new BridgedService<DeploymentAdmin>( context, DeploymentAdmin.class ).startMe();
+
+            BridgedService<PackageAdmin> bridge2 = new BridgedService<PackageAdmin>( context, PackageAdmin.class ).startMe();
+            Thread.sleep( 1000 );
+
+            LOG.info( "DP1: " + bridge.getService() );
+            LOG.info( "DP2: " + bridge2.getService() );
 
             update( m_configuration );
             Thread.currentThread().setContextClassLoader( parent );
@@ -136,10 +148,14 @@ public class CoreVault implements Vault
         };
     }
 
-    private void install( BundleContext context, ArtifactIdentifier artifact )
+    private void install( BundleContext context, String... artifacts )
         throws RepositoryException, IOException, BundleException
     {
-        context.installBundle( artifact.getName(), m_resolver.find( artifact ).getContent().get() );
+        for( String artifact : artifacts )
+        {
+            ArtifactIdentifier a = parseFromURL( artifact );
+            context.installBundle( a.getName(), m_resolver.find( a ).getContent().get() );
+        }
     }
 
     private Map<String, String> getFrameworkConfig()
@@ -156,6 +172,7 @@ public class CoreVault implements Vault
         File worker = new File( m_workDir, "framework" );
 
         p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
+        p.put( "org.osgi.framework.system.packages.extra", "org.osgi.service.deploymentadmin" );
 
         for( Object key : descriptor.keySet() )
         {
@@ -233,7 +250,7 @@ public class CoreVault implements Vault
             try
             {
                 b.start();
-                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getVersion());
+                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getState() );
             } catch( Exception e )
             {
                 LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );

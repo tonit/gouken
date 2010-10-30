@@ -16,15 +16,12 @@
 package com.okidokiteam.gouken.plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 
