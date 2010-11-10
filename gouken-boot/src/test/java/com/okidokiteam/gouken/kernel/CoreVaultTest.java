@@ -19,9 +19,11 @@ import java.io.File;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
@@ -51,25 +53,23 @@ public class CoreVaultTest
     {
         RepositoryResolver resolver = new FastLocalM2Resolver();
         Vault vault;
-        try
-        {
-            File workDir = new File( ".target/gouken" );
+        File workDir = new File( ".target/gouken" );
 
-            FileUtils.delete( workDir );
+        FileUtils.delete( workDir );
 
-            workDir.mkdirs();
+        workDir.mkdirs();
 
-            vault = new CoreVault(
-                new StaticVaultConfiguration(
-                    resolveLazy( resolver )
-                ),
-                workDir,
-                resolver
-            );
-        } catch( RepositoryException e )
-        {
-            throw new KernelException( "Underlying Repository for MA Bundles has a problem.", e );
-        }
+        vault = new CoreVault(
+            new VaultConfiguration()
+            {
+                public Artifact[] getArtifacts()
+                {
+                    return new Artifact[ 0 ]; 
+                }
+            },
+            workDir,
+            resolver
+        );
 
         return vault;
     }

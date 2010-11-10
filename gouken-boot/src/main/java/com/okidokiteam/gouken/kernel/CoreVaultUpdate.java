@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.gouken.kernel.intern;
+package com.okidokiteam.gouken.kernel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,8 @@ public class CoreVaultUpdate
     private BundleContext m_ctx;
     private RepositoryResolver m_resolver;
 
-    public CoreVaultUpdate( BundleContext bundleContext, RepositoryResolver resolver )
+    public CoreVaultUpdate( BundleContext bundleContext,
+                            RepositoryResolver resolver )
     {
         m_ctx = bundleContext;
         m_resolver = resolver;

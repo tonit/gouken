@@ -19,7 +19,7 @@ package com.okidokiteam.gouken.macosx.activity;
 
 import java.io.File;
 import java.util.Map;
-import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.macosx.Command;
 import com.okidokiteam.gouken.macosx.MacOSBoot;
@@ -55,7 +55,12 @@ public class StartCommand implements Command
             {
                 daemonize = false;
             }
-            StaticVaultConfiguration conf = new StaticVaultConfiguration( new Artifact[ 0 ] );
+            VaultConfiguration conf = new VaultConfiguration(  ) {
+                public Artifact[] getArtifacts()
+                {
+                    return new Artifact[ 0 ]; 
+                }
+            };
             // TODO adapt path to be clean and configable (just extracted out of config)
             MacOSBoot boot = new MacOSBoot( new TDaemon( daemonize ), new CoreVault( conf, new File( "target" ),null ) );
             boot.init();

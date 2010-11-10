@@ -18,14 +18,12 @@ package com.okidokiteam.gouken.plugin;
 import java.io.File;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.kernel.CoreVault;
-import com.okidokiteam.gouken.kernel.StaticVaultConfiguration;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.RepositoryException;
+import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryResolver;
-
-import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 
 /**
  * Interfaced Vault ( "PluginVault" for embedding into other plugin applications )
@@ -53,25 +51,23 @@ public class PluginVaultBuilder
         throws KernelException
     {
         Vault vault;
-        try
-        {
-            File workDir = new File( ".target/gouken" );
+        File workDir = new File( ".target/gouken" );
 
-            FileUtils.delete( workDir );
+        FileUtils.delete( workDir );
 
-            workDir.mkdirs();
+        workDir.mkdirs();
 
-            vault = new CoreVault(
-                new StaticVaultConfiguration(
-                    resolveLazy( m_resolver )
-                ),
-                workDir,
-                m_resolver
-            );
-        } catch( RepositoryException e )
-        {
-            throw new KernelException( "Underlying Repository for MA Bundles has a problem.", e );
-        }
+        vault = new CoreVault(
+            new VaultConfiguration()
+            {
+                public Artifact[] getArtifacts()
+                {
+                    return new Artifact[ 0 ];
+                }
+            },
+            workDir,
+            m_resolver
+        );
 
         return new DefaultPluginVault( vault, pointDefaultVault );
     }

@@ -28,7 +28,6 @@ import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
-import com.okidokiteam.gouken.kernel.intern.CoreVaultUpdate;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -76,7 +75,10 @@ public class CoreVault implements Vault
     private File m_workDir;
     private RepositoryResolver m_resolver;
 
-    public CoreVault( VaultConfiguration initialConfiguration, File workDir, RepositoryResolver resolver )
+    public CoreVault( VaultConfiguration initialConfiguration,
+                      File workDir,
+                      RepositoryResolver resolver,
+                      String... extraPackages )
     {
         assert initialConfiguration != null : "VaultConfiguration must not be null.";
         assert workDir != null : "workDir must not be null.";
