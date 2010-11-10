@@ -62,17 +62,18 @@ import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 public class CoreVault implements Vault
 {
 
-    private static Logger LOG = LoggerFactory.getLogger( CoreVault.class );
-    public static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
-    public static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
-    public static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
-
-    private final VaultConfiguration m_configuration;
+    private static final Logger LOG = LoggerFactory.getLogger( CoreVault.class );
+    private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
+    private static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
+    private static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
+    private static final String INTERNAL_EXTRA_MA = "org.osgi.service.log;version=1.3.0,org.osgi.service.event;version=1.1.0,org.osgi.service.metatype;version=1.1.0,org.osgi.service.deploymentadmin;version=1.0,org.osgi.service.cm;version=1.3";
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
-    private File m_workDir;
-    private RepositoryResolver m_resolver;
+
+    private final File m_workDir;
+    private final RepositoryResolver m_resolver;
+    private final VaultConfiguration m_configuration;
 
     public CoreVault( VaultConfiguration initialConfiguration,
                       File workDir,
@@ -86,6 +87,7 @@ public class CoreVault implements Vault
         m_configuration = initialConfiguration;
         m_workDir = workDir;
         m_resolver = resolver;
+
     }
 
     public synchronized VaultConfiguration start()
@@ -119,7 +121,9 @@ public class CoreVault implements Vault
 
             }
         }
-        return new VaultConfiguration() { };
+        return new VaultConfiguration()
+        {
+        };
     }
 
     private void install( BundleContext context, String... artifacts )
@@ -159,7 +163,7 @@ public class CoreVault implements Vault
 
         p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
         // TODO: make exposing compendium packages automatic.
-        p.put( "org.osgi.framework.system.packages.extra", "org.osgi.service.log;version=1.3.0,org.osgi.service.event;version=1.1.0,org.osgi.service.metatype;version=1.1.0,org.osgi.service.deploymentadmin;version=1.0,org.osgi.service.cm;version=1.3" );
+        p.put( "org.osgi.framework.system.packages.extra", INTERNAL_EXTRA_MA );
         p.put( "felix.log.level", "1" );
         for( Object key : descriptor.keySet() )
         {
@@ -174,7 +178,7 @@ public class CoreVault implements Vault
         new CoreVaultUpdate( m_framework.getBundleContext(), m_resolver ).invoke( configuration );
     }
 
-    public synchronized void stop( )
+    public synchronized void stop()
         throws KernelException
     {
         try
