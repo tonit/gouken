@@ -43,44 +43,56 @@ public class DefaultPluginVaultTest
 
     @Test
     public void testDefault()
-        throws KernelException, KernelWorkflowException
+        throws KernelException, KernelWorkflowException, InterruptedException
     {
 
         // Prepare a Builder
-        PluginVaultBuilder builder = new PluginVaultBuilder( new FastLocalM2Resolver() );
-
-        PluginVault vault = builder.create(
-            new DefaultVaultPluginPoint<MyService>( MyService.class )
-        );
-
-        VaultHandle handle = vault.start();
-
-        vault.registerCallbacks( new PluginCallback<MyService>()
+        PluginVaultBuilder builder = null;
+        try
         {
+            builder = new PluginVaultBuilder( new FastLocalM2Resolver() );
 
-            public void activated( MyService service )
+            PluginVault vault = builder.create(
+                new DefaultVaultPluginPoint<MyService>( MyService.class )
+            );
+
+            VaultHandle handle = vault.start();
+
+            vault.registerCallbacks( new PluginCallback<MyService>()
             {
 
-            }
+                public void activated( MyService service )
+                {
 
-            public void deactivated( MyService service )
-            {
+                }
 
+                public void deactivated( MyService service )
+                {
+
+                }
             }
+            );
+
+            // do install plugins via Gouken Remote Plugin Control API
+            PluginRemote remote = new LocalPluginRemote( handle );
+
+            // remote.install( parseFromURL( "" ) );
+
+            // now it must be possible to call + interact with those services in an extender pattern:
+            //after a treshold..
+
+            // shutdown..
+            //vault.stop( handle );
+
+        } catch( KernelException e )
+        {
+            e.printStackTrace();
+        } catch( KernelWorkflowException e )
+        {
+            e.printStackTrace();
         }
-        );
-
-        // do install plugins via Gouken Remote Plugin Control API
-        PluginRemote remote = new LocalPluginRemote( handle );
-
-        // remote.install( parseFromURL( "" ) );
-
-        // now it must be possible to call + interact with those services in an extender pattern:
-        //after a treshold..
-
-        // shutdown..
-        vault.stop( handle );
-
 
     }
+
 }
+

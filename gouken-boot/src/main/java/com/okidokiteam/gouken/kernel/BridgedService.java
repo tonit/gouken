@@ -18,6 +18,7 @@ package com.okidokiteam.gouken.kernel;
 import org.apache.felix.dm.Component;
 import org.apache.felix.dm.DependencyManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class BridgedService<T>
     private BundleContext m_context;
 
     // Injected
-    private T m_deployment;
+    private volatile T m_deployment;
 
     private Component m_comp;
     private Class<T> m_class;

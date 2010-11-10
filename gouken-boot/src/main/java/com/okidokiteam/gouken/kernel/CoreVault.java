@@ -20,9 +20,7 @@ package com.okidokiteam.gouken.kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import com.okidokiteam.gouken.KernelException;
@@ -30,20 +28,15 @@ import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultHandle;
+import com.okidokiteam.gouken.kernel.intern.CoreVaultUpdate;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.apache.felix.dm.Component;
-import org.apache.felix.dm.DependencyManager;
-import org.apache.felix.dm.ServiceDependency;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.osgi.service.deploymentadmin.DeploymentAdmin;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.ArtifactIdentifier;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
@@ -72,7 +65,9 @@ public class CoreVault implements Vault
 {
 
     private static Logger LOG = LoggerFactory.getLogger( CoreVault.class );
-    private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
+    public static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
+    public static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
+    public static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
 
     private final VaultConfiguration m_configuration;
 
@@ -80,12 +75,13 @@ public class CoreVault implements Vault
     private volatile Framework m_framework;
     private File m_workDir;
     private RepositoryResolver m_resolver;
-    public static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
-    public static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
-    public static final String BUNDLE_COMP = "org.osgi:org.osgi.compendium:4.2.0";
 
     public CoreVault( VaultConfiguration initialConfiguration, File workDir, RepositoryResolver resolver )
     {
+        assert initialConfiguration != null : "VaultConfiguration must not be null.";
+        assert workDir != null : "workDir must not be null.";
+        assert resolver != null : "resolver must not be null.";
+
         m_configuration = initialConfiguration;
         m_workDir = workDir;
         m_resolver = resolver;
@@ -94,7 +90,6 @@ public class CoreVault implements Vault
     public synchronized VaultHandle start()
         throws KernelWorkflowException, KernelException
     {
-
         if( isRunning() )
         {
             throw new KernelWorkflowException( "Vault is already running." );
@@ -105,30 +100,10 @@ public class CoreVault implements Vault
         {
             final Map<String, String> p = getFrameworkConfig();
             parent = Thread.currentThread().getContextClassLoader();
+
             Thread.currentThread().setContextClassLoader( null );
-
-            // Start sequence:
             loadAndStartFramework( p );
-            BundleContext context = m_framework.getBundleContext();
-
-            // install MA
-            install( context, BUNDLE_DM, BUNDLE_COMP, BUNDLE_DEPLOYMENTADMIN );
-            Thread.sleep( 1000 );
-
-            startBundles( context.getBundles() );
-
-
-            BridgedService<DeploymentAdmin> bridge = new BridgedService<DeploymentAdmin>( context, DeploymentAdmin.class ).startMe();
-
-            BridgedService<PackageAdmin> bridge2 = new BridgedService<PackageAdmin>( context, PackageAdmin.class ).startMe();
-            Thread.sleep( 1000 );
-
-            LOG.info( "DP1: " + bridge.getService() );
-            LOG.info( "DP2: " + bridge2.getService() );
-
-            update( m_configuration );
             Thread.currentThread().setContextClassLoader( parent );
-
         } catch( Exception e )
         {
             // kind of a clean the mess up..
@@ -156,6 +131,18 @@ public class CoreVault implements Vault
             ArtifactIdentifier a = parseFromURL( artifact );
             context.installBundle( a.getName(), m_resolver.find( a ).getContent().get() );
         }
+        for( Bundle b : context.getBundles() )
+        {
+            try
+            {
+                b.start();
+                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getState() );
+            } catch( Exception e )
+            {
+                LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
+
+            }
+        }
     }
 
     private Map<String, String> getFrameworkConfig()
@@ -172,8 +159,9 @@ public class CoreVault implements Vault
         File worker = new File( m_workDir, "framework" );
 
         p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
-        p.put( "org.osgi.framework.system.packages.extra", "org.osgi.service.deploymentadmin" );
-
+        // TODO: make exposing compendium packages automatic.
+        p.put( "org.osgi.framework.system.packages.extra", "org.osgi.service.log;version=1.3.0,org.osgi.service.event;version=1.1.0,org.osgi.service.metatype;version=1.1.0,org.osgi.service.deploymentadmin;version=1.0,org.osgi.service.cm;version=1.3" );
+        p.put( "felix.log.level", "1" );
         for( Object key : descriptor.keySet() )
         {
             p.put( (String) key, descriptor.getProperty( (String) key ) );
@@ -184,17 +172,7 @@ public class CoreVault implements Vault
     public void update( VaultConfiguration configuration )
         throws KernelException
     {
-        try
-        {
-            // create a deployment package and install
-
-            //installBundles( m_framework.getBundleContext(), configuration.getArtifacts() );
-        } catch( Exception e )
-        {
-            throw new KernelException( "Problem while update() using configuration: " + configuration, e );
-        }
-
-
+        new CoreVaultUpdate( m_framework.getBundleContext(), m_resolver ).invoke( configuration );
     }
 
     public synchronized void stop( VaultHandle handle )
@@ -228,35 +206,9 @@ public class CoreVault implements Vault
 
         m_framework.start();
 
+        // install MA
+        install( m_framework.getBundleContext(), BUNDLE_DM, BUNDLE_DEPLOYMENTADMIN );
 
-    }
-
-    private Bundle[] installBundles( BundleContext ctx, Artifact... artifacts )
-        throws IOException, BundleException, RepositoryException
-    {
-        List<Bundle> bundles = new ArrayList<Bundle>( artifacts.length );
-        for( Artifact artifact : artifacts )
-        {
-            LOG.info( "Installing " + artifact.getName() );
-            bundles.add( ctx.installBundle( artifact.getName(), artifact.getContent().get() ) );
-        }
-        return bundles.toArray( new Bundle[ bundles.size() ] );
-    }
-
-    private void startBundles( Bundle... bundles )
-    {
-        for( Bundle b : bundles )
-        {
-            try
-            {
-                b.start();
-                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getState() );
-            } catch( Exception e )
-            {
-                LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
-
-            }
-        }
     }
 
     private void tryShutdown()
@@ -274,7 +226,7 @@ public class CoreVault implements Vault
         }
     }
 
-    public boolean isRunning()
+    private boolean isRunning()
     {
         return ( m_framework != null );
     }
