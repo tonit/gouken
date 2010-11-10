@@ -19,12 +19,12 @@ public interface Vault
     /**
      * Start the underlying vault
      *
-     * @return VaultHandle instance.
+     * @return VaultConfiguration instance. Derive new changesets from this initial instance.
      *
      * @throws KernelException         in case of an unexpected problem.
      * @throws KernelWorkflowException Raised e.g. when starting a already running vault again.
      */
-    VaultHandle start()
+    VaultConfiguration start()
         throws KernelWorkflowException, KernelException;
 
     /**
@@ -38,11 +38,9 @@ public interface Vault
     /**
      * Stops a vault. Also invalidates
      *
-     * @param handle that has been derived when starting the vault.
-     *
      * @throws KernelException         in case of an unexpected problem.
      * @throws KernelWorkflowException For example when handle is not valid. And/Or vault is not running.
      */
-    void stop( VaultHandle handle )
+    void stop( )
         throws KernelWorkflowException, KernelException;
 }

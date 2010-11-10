@@ -15,7 +15,6 @@
  */
 package com.okidokiteam.gouken.plugin.remotes;
 
-import com.okidokiteam.gouken.VaultHandle;
 import com.okidokiteam.gouken.plugin.PluginRemote;
 import org.ops4j.pax.repository.ArtifactIdentifier;
 
@@ -25,7 +24,7 @@ import org.ops4j.pax.repository.ArtifactIdentifier;
 public class LocalPluginRemote implements PluginRemote
 {
 
-    public LocalPluginRemote( VaultHandle handle )
+    public LocalPluginRemote(  )
     {
         
     }

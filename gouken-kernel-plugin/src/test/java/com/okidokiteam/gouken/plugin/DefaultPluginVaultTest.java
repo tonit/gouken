@@ -17,20 +17,12 @@ package com.okidokiteam.gouken.plugin;
 
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
-import com.okidokiteam.gouken.VaultHandle;
+import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.plugin.bridge.MyService;
 import com.okidokiteam.gouken.plugin.intern.DefaultVaultPluginPoint;
 import com.okidokiteam.gouken.plugin.remotes.LocalPluginRemote;
-import com.sun.xml.internal.ws.org.objectweb.asm.AnnotationVisitor;
-import com.sun.xml.internal.ws.org.objectweb.asm.Attribute;
-import com.sun.xml.internal.ws.org.objectweb.asm.ClassVisitor;
-import com.sun.xml.internal.ws.org.objectweb.asm.FieldVisitor;
-import com.sun.xml.internal.ws.org.objectweb.asm.MethodVisitor;
 import org.junit.Test;
-import org.mockito.asm.ClassAdapter;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
-
-import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 
 /**
  *
@@ -56,7 +48,7 @@ public class DefaultPluginVaultTest
                 new DefaultVaultPluginPoint<MyService>( MyService.class )
             );
 
-            VaultHandle handle = vault.start();
+            VaultConfiguration handle = vault.start();
 
             vault.registerCallbacks( new PluginCallback<MyService>()
             {
@@ -74,7 +66,7 @@ public class DefaultPluginVaultTest
             );
 
             // do install plugins via Gouken Remote Plugin Control API
-            PluginRemote remote = new LocalPluginRemote( handle );
+            PluginRemote remote = new LocalPluginRemote( );
 
             // remote.install( parseFromURL( "" ) );
 

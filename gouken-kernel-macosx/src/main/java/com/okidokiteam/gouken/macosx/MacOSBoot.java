@@ -23,7 +23,6 @@ import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
-import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -97,7 +96,7 @@ public class MacOSBoot implements RemoteVault
         return new File( m_folder, WORK );
     }
 
-    public synchronized void stop( VaultHandle handle )
+    public synchronized void stop( )
         throws KernelException
     {
         try
@@ -122,13 +121,13 @@ public class MacOSBoot implements RemoteVault
         }
     }
 
-    public synchronized VaultHandle start()
+    public synchronized VaultConfiguration start()
         throws KernelException, KernelWorkflowException
     {
         // make a RMI Handle:
 
-        VaultHandle handle = m_vault.start();
-        bind( handle );
+        VaultConfiguration handle = m_vault.start();
+        bind(  );
         return handle;
     }
 
@@ -138,7 +137,7 @@ public class MacOSBoot implements RemoteVault
         // TODO implement
     }
 
-    private void installShutdownHook( final VaultHandle handle )
+    private void installShutdownHook(  )
     {
 
         Runtime.getRuntime().addShutdownHook( new Thread()
@@ -148,7 +147,7 @@ public class MacOSBoot implements RemoteVault
             {
                 try
                 {
-                    m_vault.stop( handle );
+                    m_vault.stop( );
                 } catch( Exception e )
                 {
                     e.printStackTrace();
@@ -158,7 +157,7 @@ public class MacOSBoot implements RemoteVault
         );
     }
 
-    private void bind( VaultHandle handle )
+    private void bind(  )
     {
         try
         {

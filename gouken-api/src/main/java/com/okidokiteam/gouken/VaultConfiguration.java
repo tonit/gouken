@@ -10,8 +10,5 @@ import org.ops4j.pax.repository.Artifact;
 public interface VaultConfiguration
 {
 
-    /**
-     * @return Artifacts
-     */
-    public Artifact[] getArtifacts();
+  
 }

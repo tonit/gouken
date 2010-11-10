@@ -40,7 +40,7 @@ public class StopCommand implements Command
         try
         {
             RemoteVault vault = new RemoteCommand().getRbc();
-            vault.stop( null );
+            vault.stop( );
             LOG.info( "Stopped." );
         } catch( Exception e )
         {

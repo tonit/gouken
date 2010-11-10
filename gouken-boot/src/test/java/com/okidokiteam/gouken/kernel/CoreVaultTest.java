@@ -20,15 +20,11 @@ import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
-import com.okidokiteam.gouken.VaultHandle;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Artifact;
-import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
-
-import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 
 /**
  *
@@ -41,11 +37,11 @@ public class CoreVaultTest
         throws KernelWorkflowException, KernelException
     {
         Vault coreVault = create();
-        VaultHandle handle = coreVault.start();
+        VaultConfiguration conf = coreVault.start();
 
-        coreVault.update( null );
+        coreVault.update( conf );
 
-        coreVault.stop( handle );
+        coreVault.stop( );
     }
 
     private Vault create()

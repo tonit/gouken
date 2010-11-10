@@ -27,7 +27,6 @@ import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
-import com.okidokiteam.gouken.VaultHandle;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -89,7 +88,7 @@ public class CoreVault implements Vault
         m_resolver = resolver;
     }
 
-    public synchronized VaultHandle start()
+    public synchronized VaultConfiguration start()
         throws KernelWorkflowException, KernelException
     {
         if( isRunning() )
@@ -120,9 +119,7 @@ public class CoreVault implements Vault
 
             }
         }
-        return new VaultHandle()
-        {
-        };
+        return new VaultConfiguration() { };
     }
 
     private void install( BundleContext context, String... artifacts )
@@ -177,7 +174,7 @@ public class CoreVault implements Vault
         new CoreVaultUpdate( m_framework.getBundleContext(), m_resolver ).invoke( configuration );
     }
 
-    public synchronized void stop( VaultHandle handle )
+    public synchronized void stop( )
         throws KernelException
     {
         try
