@@ -36,6 +36,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.repository.ArtifactIdentifier;
+import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 
@@ -123,6 +124,10 @@ public class CoreVault implements Vault
         }
         return new VaultConfiguration()
         {
+            public InputStreamSource get()
+            {
+                return null; 
+            }
         };
     }
 

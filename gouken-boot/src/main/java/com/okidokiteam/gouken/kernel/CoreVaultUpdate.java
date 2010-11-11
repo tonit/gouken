@@ -57,29 +57,8 @@ public class CoreVaultUpdate
         DeploymentAdmin admin = find( m_ctx );
         try
         {
-            // sample.
-            DeploymentPackage aPackage = admin.installDeploymentPackage( createDP( "org.apache.felix:org.apache.felix.shell.remote:1.0.4",
-                                                                                   "org.apache.felix:org.apache.felix.shell:1.0.2",
-                                                                                   "org.apache.felix:org.apache.felix.dependencymanager.shell:3.0.0-SNAPSHOT"
-            )
-            );
-
-            LOG.info( "Installed DP " + aPackage.getName() );
-
-            for( BundleInfo bundleInfo : aPackage.getBundleInfos() )
-            {
-
-                LOG.info( "INF: Bundle: " + bundleInfo.getSymbolicName() + " is " + bundleInfo.getVersion() );
-
-            }
-
-            for( Bundle b : m_ctx.getBundles() )
-            {
-                LOG.info( "CTX: Bundle: " + b.getSymbolicName() + " is " + b.getState() );
-            }
-        } catch( RepositoryException e )
-        {
-            e.printStackTrace();
+            // assume straigt that this is a compatible package.
+            admin.installDeploymentPackage( configuration.get().get() );
         } catch( DeploymentException e )
         {
             e.printStackTrace();
@@ -89,6 +68,31 @@ public class CoreVaultUpdate
         } finally
         {
 // unget
+        }
+    }
+
+    private void example( DeploymentAdmin admin )
+        throws DeploymentException, RepositoryException, IOException
+    {
+        // sample.
+        DeploymentPackage aPackage = admin.installDeploymentPackage( createDP( "org.apache.felix:org.apache.felix.shell.remote:1.0.4",
+                                                                               "org.apache.felix:org.apache.felix.shell:1.0.2",
+                                                                               "org.apache.felix:org.apache.felix.dependencymanager.shell:3.0.0-SNAPSHOT"
+        )
+        );
+
+        LOG.info( "Installed DP " + aPackage.getName() );
+
+        for( BundleInfo bundleInfo : aPackage.getBundleInfos() )
+        {
+
+            LOG.info( "INF: Bundle: " + bundleInfo.getSymbolicName() + " is " + bundleInfo.getVersion() );
+
+        }
+
+        for( Bundle b : m_ctx.getBundles() )
+        {
+            LOG.info( "CTX: Bundle: " + b.getSymbolicName() + " is " + b.getState() );
         }
     }
 
