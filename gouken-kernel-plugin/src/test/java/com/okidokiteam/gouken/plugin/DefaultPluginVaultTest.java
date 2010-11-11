@@ -18,6 +18,7 @@ package com.okidokiteam.gouken.plugin;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.VaultConfiguration;
+import com.okidokiteam.gouken.VaultConfigurationSource;
 import com.okidokiteam.gouken.plugin.bridge.MyService;
 import com.okidokiteam.gouken.plugin.intern.DefaultVaultPluginPoint;
 import com.okidokiteam.gouken.plugin.remotes.LocalPluginRemote;
@@ -48,7 +49,7 @@ public class DefaultPluginVaultTest
                 new DefaultVaultPluginPoint<MyService>( MyService.class )
             );
 
-            VaultConfiguration handle = vault.start();
+            VaultConfigurationSource handle = vault.start();
 
             vault.registerCallbacks( new PluginCallback<MyService>()
             {

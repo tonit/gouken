@@ -6,7 +6,11 @@ Gouken is an Open Source project that provides a dramatically simplified OSGi ba
 Instead of the routh OSGi Core API it provides things like transactional updates and a repository system.
 
 The Vault API actually never mentions OSGi terminology like "Bundles" or "Manifest Files".
-Instead it provides a combination of highler level api ("Configurations" instead of Bundles and Manifests ), ad-hoc bundle packaging and developer friendly feedback mechanisms.
+Instead it provides
+ - a combination of highler level api ("Configurations" instead of Bundles and Manifests )
+ - transactional state management
+ - ad-hoc bundle packaging
+ - auditing mechanisms
 
 h2. Specialized Vaults
 

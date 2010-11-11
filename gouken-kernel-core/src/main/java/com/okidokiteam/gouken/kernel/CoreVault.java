@@ -27,6 +27,9 @@ import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
+import com.okidokiteam.gouken.VaultConfigurationSource;
+import com.okidokiteam.gouken.kernel.ma.Activator;
+import com.okidokiteam.gouken.kernel.ma.DPVaultAgent;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -36,11 +39,12 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.repository.ArtifactIdentifier;
-import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
+import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 
 import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.*;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
@@ -67,31 +71,34 @@ public class CoreVault implements Vault
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
     private static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
     private static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
+    //  private static final String BUNDLE_LOGGING_API = "org.slf4j:slf4j-api:1.6.1";
+    private static final String BUNDLE_LOGGING_API = "org.ops4j.pax.logging:pax-logging-api:1.5.1";
+
+    private static final String BUNDLE_CMPD = "org.osgi:org.osgi.compendium:4.2.0";
+
     private static final String INTERNAL_EXTRA_MA = "org.osgi.service.log;version=1.3.0,org.osgi.service.event;version=1.1.0,org.osgi.service.metatype;version=1.1.0,org.osgi.service.deploymentadmin;version=1.0,org.osgi.service.cm;version=1.3";
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
-
     private final File m_workDir;
     private final RepositoryResolver m_resolver;
-    private final VaultConfiguration m_configuration;
 
-    public CoreVault( VaultConfiguration initialConfiguration,
+
+    public CoreVault(
                       File workDir,
                       RepositoryResolver resolver,
                       String... extraPackages )
     {
-        assert initialConfiguration != null : "VaultConfiguration must not be null.";
         assert workDir != null : "workDir must not be null.";
         assert resolver != null : "resolver must not be null.";
 
-        m_configuration = initialConfiguration;
+
         m_workDir = workDir;
         m_resolver = resolver;
 
     }
 
-    public synchronized VaultConfiguration start()
+    public synchronized VaultConfigurationSource start()
         throws KernelWorkflowException, KernelException
     {
         if( isRunning() )
@@ -100,14 +107,17 @@ public class CoreVault implements Vault
         }
 
         ClassLoader parent = null;
+        VaultConfiguration initialConfig;
         try
         {
-            final Map<String, String> p = getFrameworkConfig();
+            final Map<String, Object> p = getFrameworkConfig();
             parent = Thread.currentThread().getContextClassLoader();
 
             Thread.currentThread().setContextClassLoader( null );
             loadAndStartFramework( p );
             Thread.currentThread().setContextClassLoader( parent );
+
+
         } catch( Exception e )
         {
             // kind of a clean the mess up..
@@ -122,13 +132,8 @@ public class CoreVault implements Vault
 
             }
         }
-        return new VaultConfiguration()
-        {
-            public InputStreamSource get()
-            {
-                return null; 
-            }
-        };
+
+        return new DPVaultConfigurationSource();
     }
 
     private void install( BundleContext context, String... artifacts )
@@ -153,34 +158,11 @@ public class CoreVault implements Vault
         }
     }
 
-    private Map<String, String> getFrameworkConfig()
-        throws IOException
-    {
-        InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
-        Properties descriptor = new Properties();
-        if( ins != null )
-        {
-            descriptor.load( ins );
-        }
-
-        final Map<String, String> p = new HashMap<String, String>();
-        File worker = new File( m_workDir, "framework" );
-
-        p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
-        // TODO: make exposing compendium packages automatic.
-        p.put( "org.osgi.framework.system.packages.extra", INTERNAL_EXTRA_MA );
-        p.put( "felix.log.level", "1" );
-        for( Object key : descriptor.keySet() )
-        {
-            p.put( (String) key, descriptor.getProperty( (String) key ) );
-        }
-        return p;
-    }
-
     public void update( VaultConfiguration configuration )
         throws KernelException
     {
-        new CoreVaultUpdate( m_framework.getBundleContext(), m_resolver ).invoke( configuration );
+        // access the underlying, osgi based agent / delegate
+        new VaultAgentClient( m_framework.getBundleContext() ).update( configuration );
     }
 
     public synchronized void stop()
@@ -205,18 +187,72 @@ public class CoreVault implements Vault
 
     }
 
-    private void loadAndStartFramework( Map<String, String> p )
+    private Map<String, Object> getFrameworkConfig()
+        throws IOException
+    {
+        InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
+        Properties descriptor = new Properties();
+        if( ins != null )
+        {
+            descriptor.load( ins );
+        }
+
+        final Map<String, Object> p = new HashMap<String, Object>();
+        File worker = new File( m_workDir, "framework" );
+
+        p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
+        p.put( "felix.log.level", "1" );
+
+        // TODO: This is shared stuff. We (the host) may load classes. The underlying FW must the same classes or you will be penetrated with ClassCastExceptions.
+        p.put( "org.osgi.framework.system.packages.extra", "com.okidokiteam.gouken,org.ops4j.pax.repository" );
+
+        for( Object key : descriptor.keySet() )
+        {
+            p.put( (String) key, descriptor.getProperty( (String) key ) );
+        }
+        return p;
+    }
+
+    private void loadAndStartFramework( Map<String, Object> p )
         throws BundleException, IOException, RepositoryException, KernelException
     {
         FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
         m_framework = factory.newFramework( p );
-        m_framework.init();
 
+        //p.put( FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, Arrays.asList( new Activator() ) );
+        //m_framework = new Felix( p );
+        m_framework.init();
         m_framework.start();
 
-        // install MA
-        install( m_framework.getBundleContext(), BUNDLE_DM, BUNDLE_DEPLOYMENTADMIN );
+        // supplementary bundles
+        install( m_framework.getBundleContext()
+            , BUNDLE_DM
+            , BUNDLE_DEPLOYMENTADMIN
+            , BUNDLE_CMPD
+            , BUNDLE_LOGGING_API
+        );
 
+        // MA
+        installDynamicBundle( "GoukenManagementAgent", Activator.class, DPVaultAgent.class ).start();
+    }
+
+    private Bundle installDynamicBundle( String name, Class a, Class... extraContent )
+        throws BundleException
+    {
+        TinyBundle tb = newBundle();
+
+        for( Class c : extraContent )
+        {
+            tb.add( c );
+        }
+
+        if( a != null )
+        {
+            tb.add( a );
+            tb.set( "Bundle-Activator", a.getName() );
+        }
+
+        return m_framework.getBundleContext().installBundle( name, tb.build( withBnd() ) );
     }
 
     private void tryShutdown()

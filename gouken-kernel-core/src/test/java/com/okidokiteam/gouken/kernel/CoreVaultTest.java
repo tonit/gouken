@@ -16,13 +16,13 @@
 package com.okidokiteam.gouken.kernel;
 
 import java.io.File;
+import java.io.IOException;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
-import com.okidokiteam.gouken.VaultConfiguration;
+import com.okidokiteam.gouken.VaultConfigurationSource;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
 
@@ -34,14 +34,18 @@ public class CoreVaultTest
 
     @Test
     public void testCore()
-        throws KernelWorkflowException, KernelException
+        throws KernelWorkflowException, KernelException, IOException
     {
         Vault coreVault = create();
-        VaultConfiguration conf = coreVault.start();
+        VaultConfigurationSource conf = coreVault.start();
 
-        coreVault.update( conf );
+        // now install some software:
 
-        coreVault.stop( );
+        coreVault.update( conf
+                              .build()
+        );
+
+        coreVault.stop();
     }
 
     private Vault create()
@@ -56,14 +60,6 @@ public class CoreVaultTest
         workDir.mkdirs();
 
         vault = new CoreVault(
-            new VaultConfiguration()
-            {
-
-                public InputStreamSource get()
-                {
-                    return null; 
-                }
-            },
             workDir,
             resolver
         );

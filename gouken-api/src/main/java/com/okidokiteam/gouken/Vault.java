@@ -13,7 +13,7 @@ package com.okidokiteam.gouken;
  * A vault can be started and stopped. Thats all. Upon startup you get a interaction handle that you can use to authenticate a trusted
  * management agent client.
  */
-public interface Vault
+public interface Vault extends VaultAgent
 {
 
     /**
@@ -24,16 +24,9 @@ public interface Vault
      * @throws KernelException         in case of an unexpected problem.
      * @throws KernelWorkflowException Raised e.g. when starting a already running vault again.
      */
-    VaultConfiguration start()
+    VaultConfigurationSource start()
         throws KernelWorkflowException, KernelException;
 
-    /**
-     * @param configuration configuration you want to issue to the vault.
-     *
-     * @throws KernelException in case of a problem
-     */
-    void update( VaultConfiguration configuration )
-        throws KernelException;
 
     /**
      * Stops a vault. Also invalidates

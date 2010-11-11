@@ -19,7 +19,7 @@
 			<modules>
 				<module>pom</module>
                 <module>gouken-api</module>                              
-				<module>gouken-boot</module>
+				<module>gouken-kernel-core</module>
                 <module>gouken-kernel-plugin</module>
                <!--
                 <module>gouken-kernel-macosx</module>
@@ -46,11 +46,5 @@
 			
 		</profile>
 
-        <profile>
-			<id>tests</id>
-			<modules>
-                <module>test-kernel-java</module>
-            </modules>
-        </profile>
 	</profiles>
 </project>

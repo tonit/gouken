@@ -58,14 +58,7 @@ public class PluginVaultBuilder
         workDir.mkdirs();
 
         vault = new CoreVault(
-            new VaultConfiguration()
-            {
 
-                public InputStreamSource get()
-                {
-                    return null; 
-                }
-            },
             workDir,
             m_resolver
         );

@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>gouken-boot</artifactId>
+            <artifactId>gouken-kernel-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
