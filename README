@@ -1,3 +1,28 @@
-Gouken 2010
+h1. Gouken: Specialized OSGi Runtimes
 
-For information contact toni@okidokiteam.com .
+h2. Tiny OSGi
+
+Gouken is an Open Source project that provides a dramatically simplified OSGi based runtime which is being called "Vault".
+Instead of the routh OSGi Core API it provides things like transactional updates and a repository system.
+
+The Vault API actually never mentions OSGi terminology like "Bundles" or "Manifest Files".
+Instead it provides a combination of highler level api ("Configurations" instead of Bundles and Manifests ), ad-hoc bundle packaging and developer friendly feedback mechanisms.
+
+h2. Specialized Vaults
+
+Based on Vault, you get highly specialized kernels like for example embedded plugin systems or dynamic android service hubs.
+
+Those specialized Vaults address common usecases without requiring you to fully face the reality (reference: OSGi tells you how bad your architecture really is).
+
+Instead, you boot a valid JEE citizen like a webapp or EAR inside your lovely big IBM Websphere Container.
+From there, you can gradually move parts of your application to a ?Services based architecture without noticing you are setting inside this "developer unfriendly" ecosystem called OSGi already.
+
+h2. OSGi Forward
+
+This principle, limiting the bottom layer and providing specialized versions, tries to address common OSGi pitfalls.
+
+h1. Terminology
+
+Vault          = Managed Environment inside an (unmanaged) environment
+Kernel         = Physical assembly. Usually in native unit of deployment of a foreign ecosystem (EAR,WAR,APK,etc..).
+Configuration  = State of a vault. Issuing a new configuration is the only way to change the vault state. Atomic.
