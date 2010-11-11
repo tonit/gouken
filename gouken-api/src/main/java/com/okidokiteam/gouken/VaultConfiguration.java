@@ -1,6 +1,7 @@
 package com.okidokiteam.gouken;
 
 import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.InputStreamSource;
 
 /**
  * Configuration of a desired vault. After issuing this to a vault, it will adapt that state.
@@ -9,6 +10,7 @@ import org.ops4j.pax.repository.Artifact;
  */
 public interface VaultConfiguration
 {
+    
+    InputStreamSource get();
 
-  
 }
