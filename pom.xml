@@ -21,10 +21,12 @@
                 <module>gouken-api</module>                              
 				<module>gouken-boot</module>
                 <module>gouken-kernel-plugin</module>
+               <!--
                 <module>gouken-kernel-macosx</module>
                 <module>gouken-kernel-android</module>
                 <module>gouken-kernel-webapp</module>
-                <module>gouken-kernel-gae</module>                       
+                <module>gouken-kernel-gae</module>
+               -->
 			</modules>
 		</profile>
 		
