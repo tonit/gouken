@@ -58,11 +58,8 @@ public class CoreVaultUpdate
         try
         {
             // assume straigt that this is a compatible package.
-            admin.installDeploymentPackage( configuration.get().get() );
-        } catch( DeploymentException e )
-        {
-            e.printStackTrace();
-        } catch( IOException e )
+            //admin.installDeploymentPackage( configuration.get().get() );
+        } catch( Exception e )
         {
             e.printStackTrace();
         } finally

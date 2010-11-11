@@ -27,6 +27,7 @@ import com.okidokiteam.gouken.macosx.TDaemon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.InputStreamSource;
 
 /**
  * @author Toni Menzel
@@ -56,9 +57,10 @@ public class StartCommand implements Command
                 daemonize = false;
             }
             VaultConfiguration conf = new VaultConfiguration(  ) {
-                public Artifact[] getArtifacts()
+
+                public InputStreamSource get()
                 {
-                    return new Artifact[ 0 ]; 
+                    return null;
                 }
             };
             // TODO adapt path to be clean and configable (just extracted out of config)

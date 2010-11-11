@@ -22,7 +22,7 @@ import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryResolver;
 
 /**
@@ -60,9 +60,10 @@ public class PluginVaultBuilder
         vault = new CoreVault(
             new VaultConfiguration()
             {
-                public Artifact[] getArtifacts()
+
+                public InputStreamSource get()
                 {
-                    return new Artifact[ 0 ];
+                    return null; 
                 }
             },
             workDir,

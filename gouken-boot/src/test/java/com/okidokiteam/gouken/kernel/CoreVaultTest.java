@@ -22,7 +22,7 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfiguration;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
 
@@ -58,9 +58,10 @@ public class CoreVaultTest
         vault = new CoreVault(
             new VaultConfiguration()
             {
-                public Artifact[] getArtifacts()
+
+                public InputStreamSource get()
                 {
-                    return new Artifact[ 0 ]; 
+                    return null; 
                 }
             },
             workDir,
