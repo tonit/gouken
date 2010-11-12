@@ -7,7 +7,7 @@ Instead of the routh OSGi Core API it provides things like transactional updates
 
 The Vault API actually never mentions OSGi terminology like "Bundles" or "Manifest Files".
 Instead it provides
- - a combination of highler level api ("Configurations" instead of Bundles and Manifests )
+ - an emphasis on services instead of a particular pyhsical layout ("Configurations" instead of Bundles and Manifests )
  - transactional state management
  - ad-hoc bundle packaging
  - auditing mechanisms
