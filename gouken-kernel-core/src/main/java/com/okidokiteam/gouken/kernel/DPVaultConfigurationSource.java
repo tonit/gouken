@@ -22,7 +22,7 @@ import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.repository.InputStreamSource;
+import org.ops4j.base.io.InputStreamSource;
 import org.ops4j.pax.swissbox.tinybundles.dp.DP;
 import org.ops4j.pax.swissbox.tinybundles.dp.TinyDP;
 
@@ -43,7 +43,6 @@ public class DPVaultConfigurationSource implements VaultConfigurationSource
         // its a DP!
         version = 0l;
         m_tinyDP = DP.newDeploymentPackage();
-        LOG.info( "New DeploymentPackage: " + m_tinyDP );
     }
 
     private synchronized String getNextVersion()

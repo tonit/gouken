@@ -16,7 +16,6 @@
 package com.okidokiteam.gouken.plugin.remotes;
 
 import com.okidokiteam.gouken.plugin.PluginRemote;
-import org.ops4j.pax.repository.ArtifactIdentifier;
 
 /**
  * Local instrumentation without actually having a real management agent installed inside the vault.
@@ -24,18 +23,10 @@ import org.ops4j.pax.repository.ArtifactIdentifier;
 public class LocalPluginRemote implements PluginRemote
 {
 
-    public LocalPluginRemote(  )
-    {
-        
-    }
-
-    public void install( ArtifactIdentifier identifier )
+    public LocalPluginRemote()
     {
 
     }
 
-    public void uninstall( ArtifactIdentifier identifier )
-    {
 
-    }
 }

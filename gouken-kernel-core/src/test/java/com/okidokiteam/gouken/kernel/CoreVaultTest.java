@@ -24,7 +24,7 @@ import com.okidokiteam.gouken.VaultConfigurationSource;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.RepositoryResolver;
-import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
+import org.ops4j.pax.repository.maven.FastLocalM2Resolver;
 
 /**
  *

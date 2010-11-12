@@ -21,13 +21,12 @@ import com.okidokiteam.gouken.VaultConfiguration;
 import org.osgi.service.deploymentadmin.DeploymentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.repository.InputStreamSource;
+import org.ops4j.base.io.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.swissbox.tinybundles.dp.DP;
 import org.ops4j.pax.swissbox.tinybundles.dp.TinyDP;
 
-import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
 
 /**
  * Test Helper
@@ -77,7 +76,7 @@ public class DPExample
         for( String loc : locs )
         {
 
-            dp.setBundle( "B" + ( i++ ), resolver.find( parseFromURL( loc ) ).getContent().get() );
+           // dp.setBundle( "B" + ( i++ ), resolver.find( parseFromURL( loc ) ).getContent().get() );
         }
         return dp.build();
     }

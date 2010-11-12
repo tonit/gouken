@@ -19,7 +19,7 @@ public interface Vault extends VaultAgent
     /**
      * Start the underlying vault
      *
-     * @return VaultConfiguration instance. Derive new changesets from this initial instance.
+     * @return VaultConfigurationSource instance. Change and pass commits to the vault update method (see VaultAgent)
      *
      * @throws KernelException         in case of an unexpected problem.
      * @throws KernelWorkflowException Raised e.g. when starting a already running vault again.

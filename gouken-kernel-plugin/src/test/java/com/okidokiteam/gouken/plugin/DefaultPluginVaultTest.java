@@ -17,13 +17,12 @@ package com.okidokiteam.gouken.plugin;
 
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
-import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultConfigurationSource;
 import com.okidokiteam.gouken.plugin.bridge.MyService;
 import com.okidokiteam.gouken.plugin.intern.DefaultVaultPluginPoint;
 import com.okidokiteam.gouken.plugin.remotes.LocalPluginRemote;
 import org.junit.Test;
-import org.ops4j.pax.repository.resolver.FastLocalM2Resolver;
+import org.ops4j.pax.repository.maven.FastLocalM2Resolver;
 
 /**
  *
@@ -67,7 +66,7 @@ public class DefaultPluginVaultTest
             );
 
             // do install plugins via Gouken Remote Plugin Control API
-            PluginRemote remote = new LocalPluginRemote( );
+            PluginRemote remote = new LocalPluginRemote();
 
             // remote.install( parseFromURL( "" ) );
 

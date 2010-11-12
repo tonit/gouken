@@ -38,12 +38,12 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.repository.ArtifactIdentifier;
+import org.ops4j.pax.repository.ArtifactQuery;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.RepositoryResolver;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 
-import static org.ops4j.pax.repository.resolver.RepositoryFactory.*;
+import static org.ops4j.pax.repository.base.RepositoryFactory.*;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.*;
 
 /**
@@ -83,15 +83,13 @@ public class CoreVault implements Vault
     private final File m_workDir;
     private final RepositoryResolver m_resolver;
 
-
     public CoreVault(
-                      File workDir,
-                      RepositoryResolver resolver,
-                      String... extraPackages )
+        File workDir,
+        RepositoryResolver resolver,
+        String... extraPackages )
     {
         assert workDir != null : "workDir must not be null.";
         assert resolver != null : "resolver must not be null.";
-
 
         m_workDir = workDir;
         m_resolver = resolver;
@@ -141,8 +139,8 @@ public class CoreVault implements Vault
     {
         for( String artifact : artifacts )
         {
-            ArtifactIdentifier a = parseFromURL( artifact );
-            context.installBundle( a.getName(), m_resolver.find( a ).getContent().get() );
+            ArtifactQuery a = createQuery( artifact );
+            context.installBundle( a.getQueryString(), m_resolver.find( a ).iterator().next().getContent().get() );
         }
         for( Bundle b : context.getBundles() )
         {
@@ -204,7 +202,7 @@ public class CoreVault implements Vault
         p.put( "felix.log.level", "1" );
 
         // TODO: This is shared stuff. We (the host) may load classes. The underlying FW must the same classes or you will be penetrated with ClassCastExceptions.
-        p.put( "org.osgi.framework.system.packages.extra", "com.okidokiteam.gouken,org.ops4j.pax.repository" );
+        p.put( "org.osgi.framework.system.packages.extra", "com.okidokiteam.gouken,org.ops4j.pax.repository,org.ops4j.base.io" );
 
         for( Object key : descriptor.keySet() )
         {

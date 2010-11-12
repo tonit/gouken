@@ -18,11 +18,9 @@ package com.okidokiteam.gouken.plugin;
 import java.io.File;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.Vault;
-import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryResolver;
 
 /**

@@ -15,7 +15,6 @@
  */
 package com.okidokiteam.gouken.plugin;
 
-import org.ops4j.pax.repository.ArtifactIdentifier;
 
 /**
  * A simplified management agent interface.
@@ -24,7 +23,5 @@ import org.ops4j.pax.repository.ArtifactIdentifier;
 public interface PluginRemote
 {
 
-    void install( ArtifactIdentifier identifier );
 
-    void uninstall( ArtifactIdentifier identifier );
 }
