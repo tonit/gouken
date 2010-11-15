@@ -23,7 +23,12 @@ From there, you can gradually move parts of your application to a ?Services base
 
 h2. OSGi Forward
 
-This principle, limiting the bottom layer and providing specialized versions, tries to address common OSGi pitfalls.
+This principle, limiting the bottom layer and providing specialized versions, tries to address common OSGi complaints:
+- high learning curve
+- need to re-desgin existing architectures from ground up
+- need to learn new technology tooling ("building Manifest headers")
+
+Gouken wants to address those problems with a very simple, ready to use, drop-in like, solution taking away as much OSGi "complaints" as possible.
 
 h1. Terminology
 
