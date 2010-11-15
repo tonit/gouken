@@ -36,6 +36,20 @@
         <url>https://issues.ops4j.org</url>
     </issueManagement>
 
+    <scm>
+        <connection>scm:git:git@github.com:tonit/exxam.git</connection>
+        <developerConnection>scm:git:git@github.com:tonit/exxam.git</developerConnection>
+        <url>git@github.com:tonit/exxam.git</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>okidokiteam.snapshots</id>
+            <name>Nexus Snapshot Repo</name>
+            <url>http://okidokiteam.com:/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
 
         <plugins>
@@ -118,7 +132,7 @@
 
     <dependencyManagement>
         <dependencies>
-      
+
             <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
