@@ -30,3 +30,14 @@ h1. Terminology
 Vault          = Managed Environment inside an (unmanaged) environment
 Kernel         = Physical assembly. Usually in native unit of deployment of a foreign ecosystem (EAR,WAR,APK,etc..).
 Configuration  = State of a vault. Issuing a new configuration is the only way to change the vault state. Atomic.
+
+h1. FAQ
+
+h2. How does this relate to Apache ACE ?
+
+Apache ACE is a one-2-many provisioning system.
+The core vault that is the foundation of Gouken uses the same technical foundation (OSGi Deployment Admin) as its Management Agent level.
+However, it is a very small subset that focusses on one-2-one deployments instead one-2-many.
+In the future, the goal is to use the same management agent on an implementation level.
+
+The core value behind Gouken are its specialized assembly formats that provide direct value for an existing problem space in non-osgi architectures.
