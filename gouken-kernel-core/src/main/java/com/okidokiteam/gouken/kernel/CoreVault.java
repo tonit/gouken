@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.repository.ArtifactQuery;
 import org.ops4j.pax.repository.RepositoryException;
-import org.ops4j.pax.repository.RepositoryResolver;
+import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 
 import static org.ops4j.pax.repository.base.RepositoryFactory.*;
@@ -81,11 +81,11 @@ public class CoreVault implements Vault
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
     private final File m_workDir;
-    private final RepositoryResolver m_resolver;
+    private final Resolver m_resolver;
 
     public CoreVault(
         File workDir,
-        RepositoryResolver resolver,
+        Resolver resolver,
         String... extraPackages )
     {
         assert workDir != null : "workDir must not be null.";
@@ -140,7 +140,7 @@ public class CoreVault implements Vault
         for( String artifact : artifacts )
         {
             ArtifactQuery a = createQuery( artifact );
-            context.installBundle( a.getQueryString(), m_resolver.find( a ).iterator().next().getContent().get() );
+            context.installBundle( a.getQueryString(), m_resolver.find( a ).getContent().get() );
         }
         for( Bundle b : context.getBundles() )
         {

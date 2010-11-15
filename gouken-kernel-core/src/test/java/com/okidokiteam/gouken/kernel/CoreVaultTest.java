@@ -23,7 +23,7 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultConfigurationSource;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.RepositoryResolver;
+import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.maven.FastLocalM2Resolver;
 
 /**
@@ -51,7 +51,7 @@ public class CoreVaultTest
     private Vault create()
         throws KernelException
     {
-        RepositoryResolver resolver = new FastLocalM2Resolver();
+        Resolver resolver = new FastLocalM2Resolver();
         Vault vault;
         File workDir = new File( ".target/gouken" );
 

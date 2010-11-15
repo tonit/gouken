@@ -21,7 +21,7 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.kernel.CoreVault;
 import com.okidokiteam.gouken.plugin.intern.DefaultPluginVault;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.RepositoryResolver;
+import org.ops4j.pax.repository.Resolver;
 
 /**
  * Interfaced Vault ( "PluginVault" for embedding into other plugin applications )
@@ -35,9 +35,9 @@ public class PluginVaultBuilder
         ""
     };
 
-    private final RepositoryResolver m_resolver;
+    private final Resolver m_resolver;
 
-    public PluginVaultBuilder( RepositoryResolver resolver )
+    public PluginVaultBuilder( Resolver resolver )
         throws KernelException
     {
 

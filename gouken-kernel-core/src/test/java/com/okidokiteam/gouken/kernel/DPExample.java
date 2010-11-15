@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.base.io.InputStreamSource;
 import org.ops4j.pax.repository.RepositoryException;
-import org.ops4j.pax.repository.RepositoryResolver;
+import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.swissbox.tinybundles.dp.DP;
 import org.ops4j.pax.swissbox.tinybundles.dp.TinyDP;
 
@@ -36,7 +36,7 @@ public class DPExample
 
     private static Logger LOG = LoggerFactory.getLogger( DPExample.class );
 
-    private VaultConfiguration example( RepositoryResolver resolver )
+    private VaultConfiguration example( Resolver resolver )
         throws DeploymentException, RepositoryException, IOException
     {
 
@@ -65,7 +65,7 @@ public class DPExample
 
     }
 
-    private InputStream createDP( RepositoryResolver resolver, String... locs )
+    private InputStream createDP( Resolver resolver, String... locs )
         throws RepositoryException, IOException
     {
         TinyDP dp = DP.newDeploymentPackage();
