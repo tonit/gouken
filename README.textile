@@ -9,7 +9,7 @@ The Vault API actually never mentions OSGi terminology like "Bundles" or "Manife
 Instead it provides
  - an emphasis on services instead of a particular pyhsical layout ("Configurations" instead of Bundles and Manifests )
  - transactional state management
- - ad-hoc bundle packaging
+ - ad-hoc bundle packaging/late "OSGi-fying". Let users assemble what they are used to and work from there.
  - auditing mechanisms
 
 h2. Specialized Vaults
