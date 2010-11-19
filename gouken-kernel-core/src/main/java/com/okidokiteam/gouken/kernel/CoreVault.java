@@ -20,6 +20,11 @@ package com.okidokiteam.gouken.kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +36,15 @@ import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultAgent;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultConfigurationSource;
+import com.okidokiteam.gouken.VaultPush;
 import com.okidokiteam.gouken.kernel.ma.Activator;
 import com.okidokiteam.gouken.kernel.ma.DPVaultAgent;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
@@ -68,7 +76,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.*;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class CoreVault implements Vault<Void>
+public class CoreVault<T> implements Vault<T>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( CoreVault.class );
@@ -77,14 +85,16 @@ public class CoreVault implements Vault<Void>
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
     private final File m_workDir;
+    private Class<T> m_pushServiceType;
 
-    public CoreVault( File workDir )
+    public CoreVault( File workDir, Class<T> pushService )
     {
         assert workDir != null : "workDir must not be null.";
         m_workDir = workDir;
+        m_pushServiceType = pushService;
     }
 
-    public synchronized Void start( VaultAgent agent )
+    public synchronized T start( VaultAgent agent )
         throws KernelWorkflowException, KernelException
     {
         if (isRunning())
@@ -101,9 +111,6 @@ public class CoreVault implements Vault<Void>
             Thread.currentThread().setContextClassLoader( null );
             loadAndStartFramework( p );
             Thread.currentThread().setContextClassLoader( parent );
-
-            // install MA
-
             installMA( agent );
 
         } catch (Exception e)
@@ -117,11 +124,11 @@ public class CoreVault implements Vault<Void>
             if (parent != null)
             {
                 Thread.currentThread().setContextClassLoader( parent );
-
             }
         }
 
-        return (Void) null;
+        // create a dynamic proxy for T that looks T up on demand and invokes stuff on it.
+        return getService( m_pushServiceType, "(id=*)", 1000 );
     }
 
     private void installMA( VaultAgent agent ) throws KernelException
@@ -144,7 +151,6 @@ public class CoreVault implements Vault<Void>
             try
             {
                 bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, artifact.getContent().get() ) );
-
             } catch (BundleException e)
             {
                 throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
@@ -207,9 +213,12 @@ public class CoreVault implements Vault<Void>
         p.put( "org.osgi.framework.storage", worker.getAbsolutePath() );
         // p.put( "felix.log.level", "1" );
 
-        // TODO: This is shared stuff. We (the host) may load classes. The underlying FW must the same classes or you will be penetrated with ClassCastExceptions.
-        p.put( "org.osgi.framework.system.packages.extra", "com.okidokiteam.gouken,org.ops4j.pax.repository,org.ops4j.base.io" );
-
+        String pushServicePackage = m_pushServiceType.getPackage().getName();
+        
+        p.put( "org.osgi.framework.system.packages.extra", pushServicePackage );
+        p.put( "org.osgi.framework.bootdelegation", pushServicePackage );   
+        p.put( "org.osgi.framework.bundle.parent", "framework" );
+        
         for (Object key : descriptor.keySet())
         {
             p.put( (String) key, descriptor.getProperty( (String) key ) );
@@ -227,27 +236,6 @@ public class CoreVault implements Vault<Void>
         // m_framework = new Felix( p );
         m_framework.init();
         m_framework.start();
-    }
-
-
-
-    private Bundle installDynamicBundle( String name, Class a, Class... extraContent )
-        throws BundleException
-    {
-        TinyBundle tb = newBundle();
-
-        for (Class c : extraContent)
-        {
-            tb.add( c );
-        }
-
-        if (a != null)
-        {
-            tb.add( a );
-            tb.set( "Bundle-Activator", a.getName() );
-        }
-
-        return m_framework.getBundleContext().installBundle( name, tb.build( withBnd() ) );
     }
 
     private void tryShutdown()
@@ -269,4 +257,71 @@ public class CoreVault implements Vault<Void>
     {
         return ( m_framework != null );
     }
+
+    /**
+     * Dynamic proxy around a service that is being used from the outside.
+     * Its usually being used to provide some kind of push functionality of the management agent.
+     */
+    @SuppressWarnings("unchecked")
+    private T getService( Class<T> serviceType, final String filter, final long timeout )
+    {
+        return (T) Proxy.newProxyInstance(
+                m_framework.getClass().getClassLoader(),
+                new Class<?>[] { serviceType },
+                new InvocationHandler()
+            {
+                /**
+                 * {@inheritDoc} Delegates the call to remote bundle context.
+                 */
+                public Object invoke( final Object proxy,
+                                      final Method method,
+                                      final Object[] params )
+                    throws Throwable
+                {
+                    try
+                    {
+                        return dynamicService(
+                                method,
+                                filter,
+                                timeout,
+                                params
+                                );
+                            } catch (Exception e)
+                    {
+                        throw new RuntimeException( "Invocation exception", e );
+                    }
+                }
+
+                private Object dynamicService( Method method, String filter, long timeout, Object[] params ) throws InvalidSyntaxException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+                {
+                    // find that service and invoke the method:
+                    ServiceReference ref = null;
+                    LOG.info( "Trying to locate service " + m_pushServiceType.getName() + " for method " + method.getName() );
+                    while (ref == null)
+                    {
+
+                        BundleContext ctx = m_framework.getBundleContext();
+                        ref = ctx.getServiceReference( m_pushServiceType.getName() );
+                        if (ref != null)
+                            {
+                                Object o = ctx.getService( ref );
+                                try
+                                {
+                                    return method.invoke( o, params );
+                                } finally
+                                {
+                                    ctx.ungetService( ref );
+                                }
+                            }
+                        }
+
+
+                        return null;
+                    }
+
+            }
+                );
+    }
+
+
 }

@@ -3,7 +3,6 @@ package com.okidokiteam.gouken.ace;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +11,12 @@ import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.base.RepositoryFactory;
 
+import com.google.inject.Inject;
 import com.okidokiteam.gouken.VaultAgent;
 
 /**
+ * 
+ * Lazily resolves artifacts from a file in classpath (shipped with the jar), resolves them (lazily).
  * 
  * @author tonit
  * 
@@ -26,6 +28,7 @@ public class AceVaultAgent implements VaultAgent
 
     private Artifact[] m_artifacts;
 
+    @Inject
     public AceVaultAgent( Resolver resolver ) throws IOException
     {
         assert ( resolver != null ) : "Resolver should not be null.";

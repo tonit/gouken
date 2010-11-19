@@ -18,6 +18,10 @@ package com.okidokiteam.gouken.kernel;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import static org.mockito.Mockito.*;
+import static org.hamcrest.core.Is.*;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -28,12 +32,16 @@ import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.aether.AetherResolver;
+import org.osgi.service.deploymentadmin.DeploymentAdmin;
 
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultAgent;
+import com.okidokiteam.gouken.VaultPush;
 import com.okidokiteam.gouken.ace.AceVaultAgent;
+
+import static org.hamcrest.core.Is.*;
 
 /**
  *
@@ -45,7 +53,7 @@ public class CoreVaultTest
     public void testEmptyStartStop()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Vault<Void> coreVault = getVault( getResolver() );
+        Vault<VaultPush> coreVault = getVault( VaultPush.class );
 
         VaultAgent agent = Mockito.mock( VaultAgent.class );
         when( agent.getArtifacts() ).thenReturn( new Artifact[0] );
@@ -62,11 +70,25 @@ public class CoreVaultTest
     {
         Resolver resolver = getResolver();
 
-        Vault<Void> coreVault = getVault( resolver );
+        Vault<VaultPush> coreVault = getVault( VaultPush.class );
 
         VaultAgent agent = new AceVaultAgent( resolver );
 
         coreVault.start( agent );
+        coreVault.stop();
+    }
+
+    @Test
+    public void testPush()
+        throws KernelWorkflowException, KernelException, IOException, RepositoryException
+    {
+        // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
+        Vault<DeploymentAdmin> coreVault = getVault( DeploymentAdmin.class );
+
+        DeploymentAdmin push = coreVault.start( new AceVaultAgent( getResolver() ) );
+        // do stuff
+        assertThat(push.listDeploymentPackages().length,is(0));
+
         coreVault.stop();
     }
 
@@ -75,13 +97,17 @@ public class CoreVaultTest
         return new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
     }
 
-    private Vault<Void> getVault( Resolver resolver )
+    private <T> Vault<T> getVault( Class<T> clazz )
         throws KernelException
+    {
+        return new CoreVault<T>( getCleanDirectory(), clazz );
+    }
+
+    private File getCleanDirectory()
     {
         File workDir = new File( ".target/gouken" );
         FileUtils.delete( workDir );
         workDir.mkdirs();
-
-        return new CoreVault( workDir );
+        return workDir;
     }
 }
