@@ -1,16 +1,22 @@
 package com.okidokiteam.gouken;
 
+import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.RepositoryException;
+
 /**
- * An agent running inside osgi
+ * An agent defines how a Vault is being managed.
+ * You need to issue an agent instance upon Vault.start.
+ * Vaults itself are agnostic to their managing agents.
+ * 
  */
 public interface VaultAgent
 {
 
     /**
-     * @param configuration configuration you want to issue to the vault.
-     *
-     * @throws KernelException in case of a problem
+     * List of artifacts that may be used by the vault to install the management agent
+     * 
+     * @throws RepositoryException in case artifacts cannot be resolved upon request.
+     * 
      */
-    void update( VaultConfiguration configuration )
-        throws KernelException;
+    Artifact[] getArtifacts() throws RepositoryException;
 }

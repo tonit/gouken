@@ -15,17 +15,24 @@
  */
 package com.okidokiteam.gouken.kernel;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.ops4j.io.FileUtils;
+import org.ops4j.pax.repository.Artifact;
+import org.ops4j.pax.repository.RepositoryException;
+import org.ops4j.pax.repository.Resolver;
+import org.ops4j.pax.repository.aether.AetherResolver;
+
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
-import com.okidokiteam.gouken.VaultConfigurationSource;
-import org.junit.Test;
-import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.Resolver;
-import org.ops4j.pax.repository.aether.AetherResolver;
-import org.ops4j.pax.repository.maven.FastLocalM2Resolver;
+import com.okidokiteam.gouken.VaultAgent;
 
 /**
  *
@@ -34,26 +41,25 @@ public class CoreVaultTest
 {
 
     @Test
-    public void testCore()
-        throws KernelWorkflowException, KernelException, IOException
+    public void testEmptyStartStop()
+        throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Vault coreVault = create();
-        VaultConfigurationSource conf = coreVault.start();
+        Vault<Void> coreVault = create();
 
-        // now install some software:
+        VaultAgent agent = Mockito.mock( VaultAgent.class );
+        when( agent.getArtifacts() ).thenReturn( new Artifact[0] );
 
-        coreVault.update( conf
-                              .build()
-        );
-
+        coreVault.start( agent );
         coreVault.stop();
+
+        verify( agent, Mockito.only() ).getArtifacts();
     }
 
-    private Vault create()
+    private Vault<Void> create()
         throws KernelException
     {
-        Resolver resolver = new AetherResolver(null,"http://localhost:8081/nexus/content/groups/public/");
-        Vault vault;
+        Resolver resolver = new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
+        Vault<Void> vault;
         File workDir = new File( ".target/gouken" );
 
         FileUtils.delete( workDir );
@@ -61,9 +67,8 @@ public class CoreVaultTest
         workDir.mkdirs();
 
         vault = new CoreVault(
-            workDir,
-            resolver
-        );
+                workDir,
+                resolver );
 
         return vault;
     }

@@ -37,9 +37,9 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:tonit/exxam.git</connection>
-        <developerConnection>scm:git:git@github.com:tonit/exxam.git</developerConnection>
-        <url>git@github.com:tonit/exxam.git</url>
+        <connection>scm:git:git@github.com:tonit/gouken.git</connection>
+        <developerConnection>scm:git:git@github.com:tonit/gouken.git</developerConnection>
+        <url>git@github.com:tonit/gouken.git</url>
     </scm>
 
     <distributionManagement>

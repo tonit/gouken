@@ -21,6 +21,7 @@ import java.util.List;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultAgent;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultConfigurationSource;
 import com.okidokiteam.gouken.plugin.PluginCallback;
@@ -30,14 +31,14 @@ import com.okidokiteam.gouken.plugin.VaultPluginPoint;
 /**
  *
  */
-public class DefaultPluginVault implements PluginVault
+public class DefaultPluginVault implements PluginVault<Void>
 {
 
     final private List<VaultPluginPoint> m_vaultPluginPoints;
-    final private Vault m_vault;
+    final private Vault<Void> m_vault;
     private List<PluginCallback> m_callbacks;
 
-    public DefaultPluginVault( Vault vault, VaultPluginPoint... pluginPoints )
+    public DefaultPluginVault( Vault<Void> vault, VaultPluginPoint... pluginPoints )
     {
         m_vaultPluginPoints = Arrays.asList( pluginPoints );
         m_vault = vault;
@@ -45,18 +46,6 @@ public class DefaultPluginVault implements PluginVault
         m_callbacks = new ArrayList<PluginCallback>();
     }
 
-    public VaultConfigurationSource start()
-        throws KernelException, KernelWorkflowException
-    {
-        return m_vault.start();
-    }
-
-    public void update( VaultConfiguration configuration )
-        throws KernelException
-    {
-        // TODO hang in here to check for valid config on this enviromment, annotated/transform, and finally pass to vault.
-        m_vault.update( configuration );
-    }
 
     public void stop()
         throws KernelException, KernelWorkflowException
@@ -72,6 +61,12 @@ public class DefaultPluginVault implements PluginVault
     public void unregisterCallbacks( PluginCallback... callbacks )
     {
         m_callbacks.removeAll( Arrays.asList( callbacks ) );
+
+    }
+
+    public Void start( VaultAgent agent ) throws KernelWorkflowException, KernelException
+    {
+        return m_vault.start( null );
 
     }
 }

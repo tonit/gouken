@@ -20,12 +20,15 @@ package com.okidokiteam.gouken.kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultAgent;
 import com.okidokiteam.gouken.VaultConfiguration;
 import com.okidokiteam.gouken.VaultConfigurationSource;
 import com.okidokiteam.gouken.kernel.ma.Activator;
@@ -38,6 +41,7 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.ArtifactQuery;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
@@ -64,18 +68,18 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.*;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class CoreVault implements Vault
+public class CoreVault implements Vault<Void>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( CoreVault.class );
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
-    private static final String BUNDLE_DEPLOYMENTADMIN = "org.apache.felix:org.apache.felix.dependencymanager:3.0.0-SNAPSHOT";
+    private static final String BUNDLE_DEPLOYMENTADMIN = "";
 
-    private static final String BUNDLE_DM = "org.apache.felix:org.apache.felix.deploymentadmin:0.9.0-SNAPSHOT";
+    private static final String BUNDLE_DM = "";
     // private static final String BUNDLE_LOGGING_API = "org.slf4j:slf4j-api:1.6.1";
-    private static final String BUNDLE_LOGGING_API = "org.ops4j.pax.logging:pax-logging-api:1.5.1";
+    private static final String BUNDLE_LOGGING_API = "";
 
-    private static final String BUNDLE_CMPD = "org.osgi:org.osgi.compendium:4.2.0";
+    private static final String BUNDLE_CMPD = "";
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
@@ -95,7 +99,7 @@ public class CoreVault implements Vault
 
     }
 
-    public synchronized VaultConfigurationSource start()
+    public synchronized Void start( VaultAgent agent )
         throws KernelWorkflowException, KernelException
     {
         if (isRunning())
@@ -104,7 +108,6 @@ public class CoreVault implements Vault
         }
 
         ClassLoader parent = null;
-        VaultConfiguration initialConfig;
         try
         {
             final Map<String, Object> p = getFrameworkConfig();
@@ -114,6 +117,9 @@ public class CoreVault implements Vault
             loadAndStartFramework( p );
             Thread.currentThread().setContextClassLoader( parent );
 
+            // install MA
+
+            installMA( agent );
 
         } catch (Exception e)
         {
@@ -130,36 +136,52 @@ public class CoreVault implements Vault
             }
         }
 
-        return new DPVaultConfigurationSource();
+        return (Void) null;
     }
 
-    private void install( BundleContext context, String... artifacts )
-        throws RepositoryException, IOException, BundleException
+    private void installMA( VaultAgent agent ) throws KernelException
     {
-        for (String artifact : artifacts)
+        Artifact[] artifacts;
+        try
         {
-            ArtifactQuery a = createQuery( artifact );
-            context.installBundle( a.getQueryString(), m_resolver.find( a ).getContent().get() );
+            artifacts = agent.getArtifacts();
+        } catch (RepositoryException e)
+        {
+            throw new KernelException( "Problem getting artifacts from agent: " + agent, e );
         }
-        for (Bundle b : context.getBundles())
+
+        int i = 0;
+        List<Bundle> bundles = new ArrayList<Bundle>();
+
+        for (Artifact artifact : artifacts)
+        {
+            i++;
+            try
+            {
+                bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, artifact.getContent().get() ) );
+
+            } catch (BundleException e)
+            {
+                throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
+            } catch (IOException e)
+            {
+                throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
+            } catch (RepositoryException e)
+            {
+                throw new KernelException( "Problem loading management agent resources. Artifact: " + artifact, e );
+            }
+        }
+
+        for (Bundle b : bundles)
         {
             try
             {
                 b.start();
-                LOG.info( "Installed: " + b.getSymbolicName() + " --> " + b.getState() );
-            } catch (Exception e)
+            } catch (BundleException e)
             {
-                LOG.warn( "Not started: " + b.getSymbolicName() + " - " + e.getMessage() );
-
+                throw new KernelException( "One of the Management Agent Bundles could not be started. Bundle ID: " + b.getBundleId(), e );
             }
         }
-    }
-
-    public void update( VaultConfiguration configuration )
-        throws KernelException
-    {
-        // access the underlying, osgi based agent / delegate
-        new VaultAgentClient( m_framework.getBundleContext() ).update( configuration );
     }
 
     public synchronized void stop()
@@ -220,45 +242,9 @@ public class CoreVault implements Vault
         // m_framework = new Felix( p );
         m_framework.init();
         m_framework.start();
-
-        installManagementAgent();
-
     }
 
-    private void installManagementAgent() throws RepositoryException, IOException, BundleException
-    {
-        install( m_framework.getBundleContext()
-                , BUNDLE_DM
-                , BUNDLE_DEPLOYMENTADMIN
-                , BUNDLE_CMPD
-                , BUNDLE_LOGGING_API
-                , "org.apache.felix:org.apache.felix.eventadmin:1.2.2"
-                , "javax.servlet:servlet-api:2.4"
-                , "org.apache.felix:org.apache.felix.configadmin:1.2.4"
 
-                , "org.apache.ace:ace-deployment-api:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-range-api:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-discovery-api:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-identification-api:0.8.0-SNAPSHOT"
-
-                , "org.apache.ace:ace-deployment-deploymentadmin:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-deployment-task:0.8.0-SNAPSHOT"
-
-                , "org.apache.ace:ace-consolelogger:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-discovery-property:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-identification-property:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-scheduler:0.8.0-SNAPSHOT"
-
-                , "org.apache.ace:ace-log:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-log-listener:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-gateway-log:0.8.0-SNAPSHOT"
-                , "org.apache.ace:ace-gateway-log-store:0.8.0-SNAPSHOT"
-
-        );
-        // MA
-        // installDynamicBundle( "GoukenManagementAgent", Activator.class, DPVaultAgent.class ).start();
-
-    }
 
     private Bundle installDynamicBundle( String name, Class a, Class... extraContent )
         throws BundleException

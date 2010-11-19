@@ -28,16 +28,16 @@ import org.osgi.service.deploymentadmin.DeploymentAdmin;
 public class Activator extends DependencyActivatorBase
 {
 
-    
+
     @Override
     public void init( BundleContext ctx, DependencyManager dm )
         throws Exception
     {
-        VaultAgent agentImpl = new DPVaultAgent();
+        DPVaultAgent agentImpl = new DPVaultAgent();
         dm.createComponent()
-            .setInterface( VaultAgent.class.getName(), new Hashtable() ).setImplementation( agentImpl )
-            .add( dm.createServiceDependency().setService( DeploymentAdmin.class ).setRequired( true ) )
-            .start();
+                .setInterface( VaultAgent.class.getName(), new Hashtable() ).setImplementation( agentImpl )
+                .add( dm.createServiceDependency().setService( DeploymentAdmin.class ).setRequired( true ) )
+                .start();
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.okidokiteam.gouken.Vault;
  * It is recommended to give Vault's start/stop cleanroom instances so that:
  * start,registerCallbacks(*),unregisterCallbacks(*),stop is true even without explicit user api interaction.
  */
-public interface PluginVault extends Vault
+public interface PluginVault<T> extends Vault<T>
 {
 
     /**

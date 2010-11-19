@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Deploymentadmin based vault agent.
  */
-public class DPVaultAgent implements VaultAgent
+public class DPVaultAgent
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( DPVaultAgent.class );
@@ -47,11 +47,11 @@ public class DPVaultAgent implements VaultAgent
 
             LOG.debug( "Update successful: Version: " + dp.getVersion() );
 
-        } catch( DeploymentException e )
+        } catch (DeploymentException e)
         {
             LOG.warn( "Update failed!" );
             throw new KernelException( "Unable to update state.", e );
-        } catch( IOException e )
+        } catch (IOException e)
         {
             LOG.warn( "Update failed!" );
             throw new KernelException( "Unable to update state.", e );
