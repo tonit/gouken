@@ -11,7 +11,6 @@ import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.base.RepositoryFactory;
 
-import com.google.inject.Inject;
 import com.okidokiteam.gouken.VaultAgent;
 
 /**
@@ -28,7 +27,6 @@ public class AceVaultAgent implements VaultAgent
 
     private Artifact[] m_artifacts;
 
-    @Inject
     public AceVaultAgent( Resolver resolver ) throws IOException
     {
         assert ( resolver != null ) : "Resolver should not be null.";

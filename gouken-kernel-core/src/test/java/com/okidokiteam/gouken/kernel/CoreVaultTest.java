@@ -83,11 +83,10 @@ public class CoreVaultTest
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
         // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
-        Vault<DeploymentAdmin> coreVault = getVault( DeploymentAdmin.class );
-
+        Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( getCleanDirectory(), DeploymentAdmin.class );
         DeploymentAdmin push = coreVault.start( new AceVaultAgent( getResolver() ) );
         // do stuff
-        assertThat(push.listDeploymentPackages().length,is(0));
+        assertThat( push.listDeploymentPackages().length, is( 0 ) );
 
         coreVault.stop();
     }
