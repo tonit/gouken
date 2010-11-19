@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.junit.Test;
 import org.mockito.Mockito;
