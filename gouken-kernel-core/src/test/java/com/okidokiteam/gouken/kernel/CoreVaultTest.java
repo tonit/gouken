@@ -24,6 +24,7 @@ import com.okidokiteam.gouken.VaultConfigurationSource;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Resolver;
+import org.ops4j.pax.repository.aether.AetherResolver;
 import org.ops4j.pax.repository.maven.FastLocalM2Resolver;
 
 /**
@@ -51,7 +52,7 @@ public class CoreVaultTest
     private Vault create()
         throws KernelException
     {
-        Resolver resolver = new FastLocalM2Resolver();
+        Resolver resolver = new AetherResolver(null,"http://localhost:8081/nexus/content/groups/public/");
         Vault vault;
         File workDir = new File( ".target/gouken" );
 
