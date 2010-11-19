@@ -70,8 +70,6 @@ public class CoreVaultTest
 
         coreVault.start( agent );
         coreVault.stop();
-
-
     }
 
     private Vault<Void> create( Resolver resolver )
