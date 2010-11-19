@@ -118,7 +118,7 @@ public class CoreVault<T> implements Vault<T>
         }
 
         // create a dynamic proxy for T that looks T up on demand and invokes stuff on it.
-        return getService( m_pushServiceType, "(id=*)", 1000 );
+        return createProxyService( );
     }
 
     private void installMA( VaultAgent agent ) throws KernelException
@@ -253,11 +253,11 @@ public class CoreVault<T> implements Vault<T>
      * Its usually being used to provide some kind of push functionality of the management agent.
      */
     @SuppressWarnings("unchecked")
-    private T getService( Class<T> serviceType, final String filter, final long timeout )
+    private T createProxyService(  )
     {
         return (T) Proxy.newProxyInstance(
                 m_framework.getClass().getClassLoader(),
-                new Class<?>[] { serviceType },
+                new Class<?>[] { m_pushServiceType },
                 new InvocationHandler()
             {
                 /**
@@ -272,8 +272,6 @@ public class CoreVault<T> implements Vault<T>
                     {
                         return dynamicService(
                                 method,
-                                filter,
-                                timeout,
                                 params
                                 );
                             } catch (Exception e)
@@ -282,7 +280,7 @@ public class CoreVault<T> implements Vault<T>
                     }
                 }
 
-                private Object dynamicService( Method method, String filter, long timeout, Object[] params ) throws InvalidSyntaxException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+                private Object dynamicService( Method method, Object[] params ) throws InvalidSyntaxException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
                 {
                     // find that service and invoke the method:
                     ServiceReference ref = null;
