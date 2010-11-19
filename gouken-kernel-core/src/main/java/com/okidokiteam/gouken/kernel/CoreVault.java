@@ -73,30 +73,15 @@ public class CoreVault implements Vault<Void>
 
     private static final Logger LOG = LoggerFactory.getLogger( CoreVault.class );
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
-    private static final String BUNDLE_DEPLOYMENTADMIN = "";
-
-    private static final String BUNDLE_DM = "";
-    // private static final String BUNDLE_LOGGING_API = "org.slf4j:slf4j-api:1.6.1";
-    private static final String BUNDLE_LOGGING_API = "";
-
-    private static final String BUNDLE_CMPD = "";
 
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
     private final File m_workDir;
-    private final Resolver m_resolver;
 
-    public CoreVault(
-            File workDir,
-            Resolver resolver,
-            String... extraPackages )
+    public CoreVault( File workDir )
     {
         assert workDir != null : "workDir must not be null.";
-        assert resolver != null : "resolver must not be null.";
-
         m_workDir = workDir;
-        m_resolver = resolver;
-
     }
 
     public synchronized Void start( VaultAgent agent )
