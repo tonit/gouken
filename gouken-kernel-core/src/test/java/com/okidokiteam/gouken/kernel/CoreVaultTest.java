@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,9 +45,7 @@ public class CoreVaultTest
     public void testEmptyStartStop()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Resolver resolver = new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
-
-        Vault<Void> coreVault = create( resolver );
+        Vault<Void> coreVault = getVault( getResolver() );
 
         VaultAgent agent = Mockito.mock( VaultAgent.class );
         when( agent.getArtifacts() ).thenReturn( new Artifact[0] );
@@ -63,9 +60,9 @@ public class CoreVaultTest
     public void testACEBased()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Resolver resolver = new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
+        Resolver resolver = getResolver();
 
-        Vault<Void> coreVault = create( resolver );
+        Vault<Void> coreVault = getVault( resolver );
 
         VaultAgent agent = new AceVaultAgent( resolver );
 
@@ -73,20 +70,18 @@ public class CoreVaultTest
         coreVault.stop();
     }
 
-    private Vault<Void> create( Resolver resolver )
+    private AetherResolver getResolver()
+    {
+        return new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
+    }
+
+    private Vault<Void> getVault( Resolver resolver )
         throws KernelException
     {
-        Vault<Void> vault;
         File workDir = new File( ".target/gouken" );
-
         FileUtils.delete( workDir );
-
         workDir.mkdirs();
 
-        vault = new CoreVault(
-                workDir,
-                resolver );
-
-        return vault;
+        return new CoreVault( workDir );
     }
 }
