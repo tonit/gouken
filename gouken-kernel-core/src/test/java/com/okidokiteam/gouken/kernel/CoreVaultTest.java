@@ -33,6 +33,7 @@ import com.okidokiteam.gouken.KernelException;
 import com.okidokiteam.gouken.KernelWorkflowException;
 import com.okidokiteam.gouken.Vault;
 import com.okidokiteam.gouken.VaultAgent;
+import com.okidokiteam.gouken.ace.AceVaultAgent;
 
 /**
  *
@@ -44,7 +45,9 @@ public class CoreVaultTest
     public void testEmptyStartStop()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Vault<Void> coreVault = create();
+        Resolver resolver = new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
+
+        Vault<Void> coreVault = create( resolver );
 
         VaultAgent agent = Mockito.mock( VaultAgent.class );
         when( agent.getArtifacts() ).thenReturn( new Artifact[0] );
@@ -55,10 +58,25 @@ public class CoreVaultTest
         verify( agent, Mockito.only() ).getArtifacts();
     }
 
-    private Vault<Void> create()
-        throws KernelException
+    @Test
+    public void testACEBased()
+        throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
         Resolver resolver = new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
+
+        Vault<Void> coreVault = create( resolver );
+
+        VaultAgent agent = new AceVaultAgent( resolver );
+
+        coreVault.start( agent );
+        coreVault.stop();
+
+
+    }
+
+    private Vault<Void> create( Resolver resolver )
+        throws KernelException
+    {
         Vault<Void> vault;
         File workDir = new File( ".target/gouken" );
 
