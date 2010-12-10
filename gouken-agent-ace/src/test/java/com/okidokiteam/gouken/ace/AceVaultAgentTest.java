@@ -18,16 +18,15 @@
 package com.okidokiteam.gouken.ace;
 
 import java.io.IOException;
-
 import org.junit.Test;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.assertThat;
-
 import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.ArtifactQuery;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
+
+import static org.hamcrest.core.Is.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class AceVaultAgentTest
 {

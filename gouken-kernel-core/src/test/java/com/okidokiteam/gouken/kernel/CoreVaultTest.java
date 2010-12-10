@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 
+import com.okidokiteam.gouken.*;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ops4j.io.FileUtils;
@@ -34,11 +35,6 @@ import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.aether.AetherResolver;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 
-import com.okidokiteam.gouken.KernelException;
-import com.okidokiteam.gouken.KernelWorkflowException;
-import com.okidokiteam.gouken.Vault;
-import com.okidokiteam.gouken.VaultAgent;
-import com.okidokiteam.gouken.VaultPush;
 import com.okidokiteam.gouken.ace.AceVaultAgent;
 
 import static org.hamcrest.core.Is.*;
@@ -56,7 +52,7 @@ public class CoreVaultTest
         Vault<VaultPush> coreVault = getVault( VaultPush.class );
 
         VaultAgent agent = Mockito.mock( VaultAgent.class );
-        when( agent.getArtifacts() ).thenReturn( new Artifact[0] );
+        when( agent.getArtifacts() ).thenReturn( new Artifact[ 0 ] );
 
         coreVault.start( agent );
         coreVault.stop();
@@ -83,12 +79,24 @@ public class CoreVaultTest
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
         // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
-        Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( getCleanDirectory(), DeploymentAdmin.class );
+        Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( getSettings(), DeploymentAdmin.class );
         DeploymentAdmin push = coreVault.start( new AceVaultAgent( getResolver() ) );
         // do stuff
         assertThat( push.listDeploymentPackages().length, is( 0 ) );
 
         coreVault.stop();
+    }
+
+    private VaultSettings getSettings()
+    {
+        final File f = getCleanDirectory();
+        return new VaultSettings()
+        {
+            public File getWorkingFolder()
+            {
+                return f;
+            }
+        };
     }
 
     private AetherResolver getResolver()
@@ -99,7 +107,7 @@ public class CoreVaultTest
     private <T> Vault<T> getVault( Class<T> clazz )
         throws KernelException
     {
-        return new CoreVault<T>( getCleanDirectory(), clazz );
+        return new CoreVault<T>( getSettings(), clazz );
     }
 
     private File getCleanDirectory()

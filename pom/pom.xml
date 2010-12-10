@@ -61,7 +61,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.0-alpha-4</version>
+                <version>1.1</version>
             </plugin>
 
             <plugin>
@@ -93,6 +93,37 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-plugin-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requirePluginVersions>
+                                    <message>Best Practice is to always define plugin versions!</message>
+                                    <banLatest>true</banLatest>
+                                    <banRelease>true</banRelease>
+                                    <banSnapshots>true</banSnapshots>
+                                    <phases>clean,deploy,site</phases>
+                                    <additionalPlugins>
+                                        <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
+                                        <additionalPlugin>org.apache.maven.plugins:maven-reactor-plugin</additionalPlugin>
+                                    </additionalPlugins>
+                                    <unCheckedPluginsList>org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin</unCheckedPluginsList>
+                                </requirePluginVersions>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
         </plugins>
         <pluginManagement>
             <plugins>

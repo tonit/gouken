@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.web;import java.io.File;import com.okidokiteam.gouken.VaultSettings;/** * */public class WebVaultSettings implements VaultSettings{    public File getWorkingFolder()    {        return null;  //To change body of implemented methods use File | Settings | File Templates.    }}
