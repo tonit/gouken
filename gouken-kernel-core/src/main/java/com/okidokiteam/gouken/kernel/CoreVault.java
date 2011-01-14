@@ -48,16 +48,8 @@ import org.slf4j.LoggerFactory;
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
  * Beyond this, we should not have the notion of osgi other than DeploymentPackages. (also with another name as we probably just want a subset of that spec).
  * <p/>
- * This Vault uses:
- * - Apache Felix as underlying OSGi implementation
- * - DeploymentAdmin from Felix as management agent implementation
- * - Tinybundles to transfer update() into units recognizable by the DeploymentAdmin
- * <p/>
- * This makes the update mechanism dynamic (OSGi), atomic (DeploymentAdmin) and configuration agnostic (Tinybundles).
- * <p/>
- * Because we deal with DP like Apache ACE does, we may or may not use the ACE MA here.
- * Difference is that we just have ONE management agent with one single server.(plus one client).. all in this one vault.
- * So we may make things simpler..
+ * This Vault uses an OSGi Core R 4.2+ compatible OSGi implementation
+ * <p/> *
  *
  * @author Toni Menzel
  * @since Mar 4, 2010

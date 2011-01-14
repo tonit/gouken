@@ -27,7 +27,7 @@ public class SimpleVaultAgent implements VaultAgent
     private final Store<InputStream> m_store;
 
     @Inject
-    public SimpleVaultAgent( Resolver resolver, Store store )
+    public SimpleVaultAgent( final Resolver resolver, final Store<InputStream> store )
     {
         m_resolver = resolver;
         m_store = store;

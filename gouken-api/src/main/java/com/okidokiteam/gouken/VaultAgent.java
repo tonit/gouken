@@ -7,6 +7,8 @@ import org.ops4j.pax.repository.RepositoryException;
  * An agent defines how a Vault is being managed.
  * You need to issue an agent instance upon Vault.start.
  * Vaults itself are agnostic to their managing agents.
+ *
+ * A VaultAgent usually installs a management agent (service) that is T in "new Vault<T>()"
  * 
  */
 public interface VaultAgent

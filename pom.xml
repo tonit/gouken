@@ -21,6 +21,7 @@
 				<module>gouken-tarball</module>
                 <module>gouken-api</module>           
                 <module>gouken-agent-simple</module>
+                <module>gouken-agent-tunnel</module>
                 <module>gouken-agent-ace</module>
                 <module>gouken-kernel-core</module>
                 <module>gouken-kernel-webapp</module>

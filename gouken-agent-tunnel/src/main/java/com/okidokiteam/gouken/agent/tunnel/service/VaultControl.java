@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.agent.tunnel.service;import java.io.InputStream;/** * Simplistic Vualt control */public interface VaultControl{    void installBundle( String name, InputStream stream );    void uninstallBundle( String name );    int getState( String name );}
