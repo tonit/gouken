@@ -68,8 +68,6 @@ public class CoreVault<T> implements Vault<T>
     
     private GoukenResolver m_resolver = null;
 
-    private long f = 1l;
-
     @Inject
     public CoreVault( GoukenResolver resolver, VaultSettings settings, Class<T> pushService )
     {
