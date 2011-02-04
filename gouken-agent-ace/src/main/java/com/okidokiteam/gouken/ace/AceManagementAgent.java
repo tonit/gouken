@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import com.okidokiteam.gouken.GoukenRuntimeArtifact;
+import com.okidokiteam.gouken.ArtifactReference;
 import com.okidokiteam.gouken.ManagementAgent;
 import org.ops4j.pax.repository.RepositoryException;
 
@@ -14,11 +14,11 @@ import org.ops4j.pax.repository.RepositoryException;
  *
  * @author tonit
  */
-public class AceManagementAgent implements ManagementAgent<GoukenRuntimeArtifact> {
+public class AceManagementAgent implements ManagementAgent {
 
     private static final String LOCATION = "/META-INF/bundles.provision";
 
-    private GoukenRuntimeArtifact[] m_artifacts;
+    private ArtifactReference[] m_artifacts;
 
     public AceManagementAgent( )
         throws IOException
@@ -26,7 +26,7 @@ public class AceManagementAgent implements ManagementAgent<GoukenRuntimeArtifact
       
     }
 
-    public synchronized GoukenRuntimeArtifact[] getRuntimeParts()
+    public synchronized ArtifactReference[] getRuntimeParts()
         throws RepositoryException
     {
         if( m_artifacts == null ) {
@@ -39,7 +39,7 @@ public class AceManagementAgent implements ManagementAgent<GoukenRuntimeArtifact
     private void readFromFile()
         throws RepositoryException
     {
-        List<GoukenRuntimeArtifact> list = new ArrayList<GoukenRuntimeArtifact>();
+        List<ArtifactReference> list = new ArrayList<ArtifactReference>();
 
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( getClass().getResourceAsStream( LOCATION ) ) );
         String line = null;
@@ -56,15 +56,15 @@ public class AceManagementAgent implements ManagementAgent<GoukenRuntimeArtifact
             throw new RepositoryException( "Problem reading artifacts from " + LOCATION, e );
         }
 
-        m_artifacts = list.toArray( new GoukenRuntimeArtifact[ list.size() ] );
+        m_artifacts = list.toArray( new ArtifactReference[ list.size() ] );
     }
 
-    private GoukenRuntimeArtifact newArtifact( String line )
+    private ArtifactReference newArtifact( String line )
     {
         return new DefaultRuntimeArtifact( line );
     }
 
-    private class DefaultRuntimeArtifact implements GoukenRuntimeArtifact {
+    private class DefaultRuntimeArtifact implements ArtifactReference {
 
         private final String m_name;
 

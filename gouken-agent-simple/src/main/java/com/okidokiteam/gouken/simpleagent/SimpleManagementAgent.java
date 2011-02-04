@@ -1,10 +1,10 @@
 package com.okidokiteam.gouken.simpleagent;
 
-import com.okidokiteam.gouken.GoukenRuntimeArtifact;
+import com.okidokiteam.gouken.ArtifactReference;
 import com.okidokiteam.gouken.ManagementAgent;
 import org.ops4j.pax.repository.RepositoryException;
 
-public class SimpleManagementAgent implements ManagementAgent<GoukenRuntimeArtifact> {
+public class SimpleManagementAgent implements ManagementAgent {
 
     public SimpleManagementAgent()
     {
@@ -16,9 +16,9 @@ public class SimpleManagementAgent implements ManagementAgent<GoukenRuntimeArtif
         return "[SimpleManagementAgent]";
     }
 
-    public GoukenRuntimeArtifact[] getRuntimeParts()
+    public ArtifactReference[] getRuntimeParts()
         throws RepositoryException
     {
-        return new GoukenRuntimeArtifact[ 0 ];
+        return new ArtifactReference[ 0 ];
     }
 }

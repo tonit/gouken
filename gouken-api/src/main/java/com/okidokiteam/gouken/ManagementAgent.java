@@ -10,7 +10,7 @@ import org.ops4j.pax.repository.RepositoryException;
  * A ManagementAgent usually installs a management agent (service) that is T in "new Vault<T>()"
  * 
  */
-public interface ManagementAgent<Q>
+public interface ManagementAgent
 {
 
     /**
@@ -20,5 +20,5 @@ public interface ManagementAgent<Q>
      *
      * @return Elements
      */
-    Q[] getRuntimeParts() throws RepositoryException;
+    ArtifactReference[] getRuntimeParts() throws RepositoryException;
 }

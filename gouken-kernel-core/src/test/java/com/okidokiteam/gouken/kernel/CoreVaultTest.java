@@ -27,8 +27,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.RepositoryException;
-import org.ops4j.pax.repository.Resolver;
-import org.ops4j.pax.repository.aether.AetherResolver;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 
 import com.okidokiteam.gouken.ace.AceManagementAgent;
@@ -47,7 +45,7 @@ public class CoreVaultTest {
         Vault<VaultPush> coreVault = getVault( resolver, VaultPush.class );
 
         ManagementAgent agent = Mockito.mock( ManagementAgent.class );
-        when( agent.getRuntimeParts() ).thenReturn( new GoukenRuntimeArtifact[ 0 ] );
+        when( agent.getRuntimeParts() ).thenReturn( new ArtifactReference[ 0 ] );
 
         coreVault.start( agent );
         coreVault.stop();
@@ -75,7 +73,9 @@ public class CoreVaultTest {
     {
         // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
         GoukenResolver resolver = mock( GoukenResolver.class );
+       
         Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( resolver, getSettings(), DeploymentAdmin.class );
+
         DeploymentAdmin push = coreVault.start( new AceManagementAgent() );
         // do stuff
         assertThat( push.listDeploymentPackages().length, is( 0 ) );

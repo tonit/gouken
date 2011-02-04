@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import com.okidokiteam.gouken.*;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.ops4j.pax.repository.RepositoryException;
-import org.ops4j.pax.repository.Resolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -55,8 +54,7 @@ import org.slf4j.LoggerFactory;
  * @author Toni Menzel
  * @since Mar 4, 2010
  */
-public class CoreVault<T> implements Vault<T>
-{
+public class CoreVault<PUSHTYPE> implements Vault<PUSHTYPE> {
 
     private static final Logger LOG = LoggerFactory.getLogger( CoreVault.class );
     private static final String META_INF_GOUKEN_KERNEL_PROPERTIES = "/META-INF/gouken/kernel.properties";
@@ -64,12 +62,12 @@ public class CoreVault<T> implements Vault<T>
     // accessed by shutdownhook and remote access
     private volatile Framework m_framework;
     private final VaultSettings m_settings;
-    private Class<T> m_pushServiceType;
-    
+    private Class<PUSHTYPE> m_pushServiceType;
+
     private GoukenResolver m_resolver = null;
 
     @Inject
-    public CoreVault( GoukenResolver resolver, VaultSettings settings, Class<T> pushService )
+    public CoreVault( GoukenResolver resolver, VaultSettings settings, Class<PUSHTYPE> pushService )
     {
         assert resolver != null : "resolver must not be null.";
         assert settings != null : "settings must not be null.";
@@ -84,85 +82,72 @@ public class CoreVault<T> implements Vault<T>
         this( resolver, settings, null );
     }
 
-    public synchronized T start( ManagementAgent agent )
+    public PUSHTYPE start( ManagementAgent agent )
         throws KernelWorkflowException, KernelException
     {
-        if( isRunning() )
-        {
+        if( isRunning() ) {
             throw new KernelWorkflowException( "Vault is already running." );
         }
 
         ClassLoader parent = null;
-        try
-        {
+        try {
             final Map<String, Object> p = getFrameworkConfig();
             parent = Thread.currentThread().getContextClassLoader();
 
             Thread.currentThread().setContextClassLoader( null );
             loadAndStartFramework( p );
             Thread.currentThread().setContextClassLoader( parent );
-            installMA( agent );
 
-        } catch( Exception e )
-        {
+            installAgent( agent );
+
+        } catch( Exception e ) {
             // kind of a clean the mess up..
             tryShutdown();
             throw new KernelException( "Problem starting the Vault", e );
 
-        } finally
-        {
-            if( parent != null )
-            {
+        } finally {
+            if( parent != null ) {
                 Thread.currentThread().setContextClassLoader( parent );
             }
         }
 
         // create a dynamic proxy for T that looks T up on demand and invokes stuff on it.
-        if( m_framework == null )
-        {
-            return (T) new Object();
+        if( m_framework == null ) {
+            return (PUSHTYPE) new Object();
         }
         return createProxyService();
     }
 
-    private void installMA( ManagementAgent<GoukenRuntimeArtifact> agent )
+    private void installAgent( ManagementAgent agent )
+
         throws KernelException
     {
 
-        GoukenRuntimeArtifact[] artifacts;
-        try
-        {
+        ArtifactReference[] artifacts;
+        try {
             artifacts = agent.getRuntimeParts();
-        } catch( RepositoryException e )
-        {
+        } catch( RepositoryException e ) {
             throw new KernelException( "Problem getting artifacts from agent: " + agent, e );
         }
 
         int i = 0;
         List<Bundle> bundles = new ArrayList<Bundle>();
 
-        for( GoukenRuntimeArtifact artifact : artifacts )
-        {
+        for( ArtifactReference artifact : artifacts ) {
             i++;
-            try
-            {
-                bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, m_resolver.find( artifact ).get() ));
-            } catch( BundleException e )
-            {
+            try {
+                bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, m_resolver.find( artifact ).get() ) );
+            } catch( BundleException e ) {
                 throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
-            } catch( RepositoryException e )
-            {
+            } catch( RepositoryException e ) {
                 throw new KernelException( "Problem loading management agent resources. Artifact: " + artifact, e );
             }
         }
 
-        for( Bundle b : bundles )
-        {
-            try
-            {
+        for( Bundle b : bundles ) {
+            try {
                 b.start();
-            } catch( BundleException e )
-            {
+            } catch( BundleException e ) {
                 throw new KernelException( "One of the Management Agent Bundles could not be started. Bundle ID: " + b.getBundleId(), e );
             }
         }
@@ -171,11 +156,9 @@ public class CoreVault<T> implements Vault<T>
     public synchronized void stop()
         throws KernelException
     {
-        try
-        {
+        try {
             LOG.info( "Stop hook triggered." );
-            if( m_framework != null )
-            {
+            if( m_framework != null ) {
                 BundleContext ctx = m_framework.getBundleContext();
                 Bundle systemBundle = ctx.getBundle( 0 );
                 systemBundle.stop();
@@ -183,8 +166,7 @@ public class CoreVault<T> implements Vault<T>
             }
             System.gc();
             LOG.info( "Shutdown complete." );
-        } catch( BundleException e )
-        {
+        } catch( BundleException e ) {
             LOG.error( "Problem stopping framework.", e );
         }
 
@@ -195,8 +177,7 @@ public class CoreVault<T> implements Vault<T>
     {
         InputStream ins = getClass().getResourceAsStream( META_INF_GOUKEN_KERNEL_PROPERTIES );
         Properties descriptor = new Properties();
-        if( ins != null )
-        {
+        if( ins != null ) {
             descriptor.load( ins );
         }
 
@@ -208,8 +189,7 @@ public class CoreVault<T> implements Vault<T>
 
         configureBridgingServiceDelegation( p );
 
-        for( Object key : descriptor.keySet() )
-        {
+        for( Object key : descriptor.keySet() ) {
             p.put( (String) key, descriptor.getProperty( (String) key ) );
         }
         return p;
@@ -217,8 +197,7 @@ public class CoreVault<T> implements Vault<T>
 
     private void configureBridgingServiceDelegation( Map<String, Object> p )
     {
-        if( m_pushServiceType != null )
-        {
+        if( m_pushServiceType != null ) {
             String pushServicePackage = m_pushServiceType.getPackage().getName();
 
             p.put( "org.osgi.framework.system.packages.extra", pushServicePackage );
@@ -242,14 +221,11 @@ public class CoreVault<T> implements Vault<T>
 
     private void tryShutdown()
     {
-        if( m_framework != null )
-        {
-            try
-            {
+        if( m_framework != null ) {
+            try {
                 m_framework.stop();
 
-            } catch( Exception e )
-            {
+            } catch( Exception e ) {
                 // dont care.
             }
         }
@@ -267,13 +243,12 @@ public class CoreVault<T> implements Vault<T>
      * @return proxy for t. Will delegate to underlying osgi service registry upon each call.
      */
     @SuppressWarnings( "unchecked" )
-    private T createProxyService()
+    private PUSHTYPE createProxyService()
     {
-        return (T) Proxy.newProxyInstance(
+        return (PUSHTYPE) Proxy.newProxyInstance(
             m_framework.getClass().getClassLoader(),
             new Class<?>[]{ m_pushServiceType },
-            new InvocationHandler()
-            {
+            new InvocationHandler() {
                 /**
                  * {@inheritDoc} Delegates the call to remote bundle context.
                  */
@@ -282,14 +257,12 @@ public class CoreVault<T> implements Vault<T>
                                       final Object[] params )
                     throws Throwable
                 {
-                    try
-                    {
+                    try {
                         return dynamicService(
                             method,
                             params
                         );
-                    } catch( Exception e )
-                    {
+                    } catch( Exception e ) {
                         throw new RuntimeException( "Invocation exception", e );
                     }
                 }
@@ -300,19 +273,15 @@ public class CoreVault<T> implements Vault<T>
                     // find that service and invoke the method:
                     ServiceReference ref = null;
                     LOG.info( "Trying to locate service " + m_pushServiceType.getName() + " for method " + method.getName() );
-                    while( ref == null )
-                    {
+                    while( ref == null ) {
 
                         BundleContext ctx = m_framework.getBundleContext();
                         ref = ctx.getServiceReference( m_pushServiceType.getName() );
-                        if( ref != null )
-                        {
+                        if( ref != null ) {
                             Object o = ctx.getService( ref );
-                            try
-                            {
+                            try {
                                 return method.invoke( o, params );
-                            } finally
-                            {
+                            } finally {
                                 ctx.ungetService( ref );
                             }
                         }
