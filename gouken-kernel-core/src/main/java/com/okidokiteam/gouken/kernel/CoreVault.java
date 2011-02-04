@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import com.okidokiteam.gouken.*;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
+import org.ops4j.pax.repository.Resolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -64,22 +65,28 @@ public class CoreVault<T> implements Vault<T>
     private volatile Framework m_framework;
     private final VaultSettings m_settings;
     private Class<T> m_pushServiceType;
+    
+    private GoukenResolver m_resolver = null;
 
     private long f = 1l;
 
-    public CoreVault( VaultSettings settings, Class<T> pushService )
+    @Inject
+    public CoreVault( GoukenResolver resolver, VaultSettings settings, Class<T> pushService )
     {
+        assert resolver != null : "resolver must not be null.";
         assert settings != null : "settings must not be null.";
         m_settings = settings;
+        m_resolver = resolver;
         m_pushServiceType = pushService;
     }
 
-    public CoreVault( VaultSettings settings )
+    @Inject
+    public CoreVault( GoukenResolver resolver, VaultSettings settings )
     {
-        this( settings, null );
+        this( resolver, settings, null );
     }
 
-    public synchronized T start( VaultAgent agent )
+    public synchronized T start( ManagementAgent agent )
         throws KernelWorkflowException, KernelException
     {
         if( isRunning() )
@@ -120,13 +127,14 @@ public class CoreVault<T> implements Vault<T>
         return createProxyService();
     }
 
-    private void installMA( VaultAgent agent )
+    private void installMA( ManagementAgent<GoukenRuntimeArtifact> agent )
         throws KernelException
     {
-        Artifact[] artifacts;
+
+        GoukenRuntimeArtifact[] artifacts;
         try
         {
-            artifacts = agent.getArtifacts();
+            artifacts = agent.getRuntimeParts();
         } catch( RepositoryException e )
         {
             throw new KernelException( "Problem getting artifacts from agent: " + agent, e );
@@ -135,16 +143,13 @@ public class CoreVault<T> implements Vault<T>
         int i = 0;
         List<Bundle> bundles = new ArrayList<Bundle>();
 
-        for( Artifact artifact : artifacts )
+        for( GoukenRuntimeArtifact artifact : artifacts )
         {
             i++;
             try
             {
-                bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, artifact.getContent().get() ) );
+                bundles.add( m_framework.getBundleContext().installBundle( "MA" + i, m_resolver.find( artifact ).get() ));
             } catch( BundleException e )
-            {
-                throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
-            } catch( IOException e )
             {
                 throw new KernelException( "Problem installing management agent resources. Artifact: " + artifact, e );
             } catch( RepositoryException e )

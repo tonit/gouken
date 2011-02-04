@@ -15,12 +15,9 @@
  */
 package com.okidokiteam.gouken.kernel;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import static org.mockito.Mockito.*;
 import static org.hamcrest.core.Is.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,46 +26,44 @@ import com.okidokiteam.gouken.*;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ops4j.io.FileUtils;
-import org.ops4j.pax.repository.Artifact;
 import org.ops4j.pax.repository.RepositoryException;
 import org.ops4j.pax.repository.Resolver;
 import org.ops4j.pax.repository.aether.AetherResolver;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 
-import com.okidokiteam.gouken.ace.AceVaultAgent;
-
-import static org.hamcrest.core.Is.*;
+import com.okidokiteam.gouken.ace.AceManagementAgent;
 
 /**
  *
  */
-public class CoreVaultTest
-{
+public class CoreVaultTest {
 
     @Test
     public void testEmptyStartStop()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Vault<VaultPush> coreVault = getVault( VaultPush.class );
+        GoukenResolver resolver = mock( GoukenResolver.class );
 
-        VaultAgent agent = Mockito.mock( VaultAgent.class );
-        when( agent.getArtifacts() ).thenReturn( new Artifact[ 0 ] );
+        Vault<VaultPush> coreVault = getVault( resolver, VaultPush.class );
+
+        ManagementAgent agent = Mockito.mock( ManagementAgent.class );
+        when( agent.getRuntimeParts() ).thenReturn( new GoukenRuntimeArtifact[ 0 ] );
 
         coreVault.start( agent );
         coreVault.stop();
 
-        verify( agent, Mockito.only() ).getArtifacts();
+        verify( agent, Mockito.only() ).getRuntimeParts();
     }
 
     @Test
     public void testACEBased()
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
-        Resolver resolver = getResolver();
+        GoukenResolver resolver = mock( GoukenResolver.class );
 
-        Vault<VaultPush> coreVault = getVault( VaultPush.class );
+        Vault<VaultPush> coreVault = getVault( resolver, VaultPush.class );
 
-        VaultAgent agent = new AceVaultAgent( resolver );
+        ManagementAgent agent = new AceManagementAgent();
 
         coreVault.start( agent );
         coreVault.stop();
@@ -79,8 +74,9 @@ public class CoreVaultTest
         throws KernelWorkflowException, KernelException, IOException, RepositoryException
     {
         // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
-        Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( getSettings(), DeploymentAdmin.class );
-        DeploymentAdmin push = coreVault.start( new AceVaultAgent( getResolver() ) );
+        GoukenResolver resolver = mock( GoukenResolver.class );
+        Vault<DeploymentAdmin> coreVault = new CoreVault<DeploymentAdmin>( resolver, getSettings(), DeploymentAdmin.class );
+        DeploymentAdmin push = coreVault.start( new AceManagementAgent() );
         // do stuff
         assertThat( push.listDeploymentPackages().length, is( 0 ) );
 
@@ -90,8 +86,7 @@ public class CoreVaultTest
     private VaultSettings getSettings()
     {
         final File f = getCleanDirectory();
-        return new VaultSettings()
-        {
+        return new VaultSettings() {
             public File getWorkingFolder()
             {
                 return f;
@@ -99,19 +94,16 @@ public class CoreVaultTest
         };
     }
 
-    private AetherResolver getResolver()
-    {
-        return new AetherResolver( null, "http://localhost:8081/nexus/content/groups/public/" );
-    }
-
-    private <T> Vault<T> getVault( Class<T> clazz )
+    private <T> Vault<T> getVault( GoukenResolver resolver, Class<T> clazz )
         throws KernelException
     {
-        return new CoreVault<T>( getSettings(), clazz );
+
+        return new CoreVault<T>( resolver, getSettings(), clazz );
     }
 
     private File getCleanDirectory()
     {
+
         File workDir = new File( ".target/gouken" );
         FileUtils.delete( workDir );
         workDir.mkdirs();

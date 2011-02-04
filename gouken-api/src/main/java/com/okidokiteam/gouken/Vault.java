@@ -7,7 +7,7 @@ package com.okidokiteam.gouken;
  * For example it does not allow installing single raw artifacts (bundles) or managing low level bundle lifecycle on a user level.
  * Instead, it delegates those types to a management agent installed.
  *
- * A vault can be started and stopped. Thats all. Upon startup you get a interaction handle  (PUSHTYPE) that was registered by the VaultAgent passed upon startup.
+ * A vault can be started and stopped. Thats all. Upon startup you get a interaction handle  (PUSHTYPE) that was registered by the ManagementAgent passed upon startup.
  */
 public interface Vault<PUSHTYPE>
 {
@@ -17,12 +17,12 @@ public interface Vault<PUSHTYPE>
      *
      * @param agent Agent that manages this vault
      *
-     * @return VaultConfigurationSource instance. Change and pass commits to the vault update method (see VaultAgent)
+     * @return VaultConfigurationSource instance. Change and pass commits to the vault update method (see ManagementAgent)
      *
      * @throws KernelException         in case of an unexpected problem.
      * @throws KernelWorkflowException Raised e.g. when starting a already running vault again.
      */
-    PUSHTYPE start( VaultAgent agent )
+    PUSHTYPE start( ManagementAgent agent )
         throws KernelWorkflowException, KernelException;
 
     /**
