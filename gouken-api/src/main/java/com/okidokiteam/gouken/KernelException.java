@@ -23,8 +23,13 @@ import java.net.URISyntaxException;
 public class KernelException extends Exception
 {
 
-    public KernelException( String message, Exception e )
+    public KernelException( String message, Throwable e )
     {
         super( message, e );
+    }
+
+    public KernelException( String message )
+    {
+        super( message );
     }
 }

@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -203,7 +204,9 @@ public class CoreVault<PUSHTYPE> implements Vault<PUSHTYPE> {
             p.put( "org.osgi.framework.system.packages.extra", pushServicePackage );
             p.put( "org.osgi.framework.bootdelegation", pushServicePackage );
             p.put( "org.osgi.framework.bundle.parent", "framework" );
-
+        }
+        else {
+            LOG.warn( "No Pushtype registered. Thus no bridging of anything with the surounding class loader." );
         }
     }
 
@@ -248,51 +251,9 @@ public class CoreVault<PUSHTYPE> implements Vault<PUSHTYPE> {
         return (PUSHTYPE) Proxy.newProxyInstance(
             m_framework.getClass().getClassLoader(),
             new Class<?>[]{ m_pushServiceType },
-            new InvocationHandler() {
-                /**
-                 * {@inheritDoc} Delegates the call to remote bundle context.
-                 */
-                public Object invoke( final Object proxy,
-                                      final Method method,
-                                      final Object[] params )
-                    throws Throwable
-                {
-                    try {
-                        return dynamicService(
-                            method,
-                            params
-                        );
-                    } catch( Exception e ) {
-                        throw new RuntimeException( "Invocation exception", e );
-                    }
-                }
-
-                private Object dynamicService( Method method, Object[] params )
-                    throws InvalidSyntaxException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
-                {
-                    // find that service and invoke the method:
-                    ServiceReference ref = null;
-                    LOG.info( "Trying to locate service " + m_pushServiceType.getName() + " for method " + method.getName() );
-                    while( ref == null ) {
-
-                        BundleContext ctx = m_framework.getBundleContext();
-                        ref = ctx.getServiceReference( m_pushServiceType.getName() );
-                        if( ref != null ) {
-                            Object o = ctx.getService( ref );
-                            try {
-                                return method.invoke( o, params );
-                            } finally {
-                                ctx.ungetService( ref );
-                            }
-                        }
-                    }
-
-                    return null;
-                }
-
-            }
+            new ProtectedInvocationHandler(
+                new OSGiServicePushHandler( m_pushServiceType, m_framework.getBundleContext() )
+            )
         );
     }
-
-
 }

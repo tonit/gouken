@@ -32,6 +32,7 @@ public class AceVaultAgentTest {
     public void testLoadingPropertiesCorrectly()
         throws IOException, RepositoryException
     {
+        AceManagementAgent a;
         AceManagementAgent agent = new AceManagementAgent();
         assertThat( agent.getRuntimeParts().length, is( ENTRIES_IN_SAMPLE ) );
     }
