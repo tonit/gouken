@@ -19,18 +19,19 @@
     <description>Self provisioning MA leveraging Tinybundles.</description>
 
     <dependencies>
+        <!--
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
-        <!--
+        -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
-        -->
+        
         <dependency>
             <groupId>com.okidokiteam.gouken</groupId>
             <artifactId>gouken-api</artifactId>
