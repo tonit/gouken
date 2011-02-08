@@ -1,1 +1,1 @@
-package com.okidokiteam.gouken.simpleagent;import org.ops4j.pax.repository.typed.RepositoryReference;/** *  */public enum SimpleAgentReference implements RepositoryReference {    SIMPLEAGENT}
+package com.okidokiteam.gouken.simpleagent;import org.ops4j.pax.repository.typed.TypedReference;/** *  */public enum SimpleAgentReference implements TypedReference {    SIMPLEAGENT}

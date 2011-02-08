@@ -38,7 +38,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Provider;
 import org.ops4j.pax.repository.RepositoryException;
-import org.ops4j.pax.repository.typed.RepositoryReference;
+import org.ops4j.pax.repository.typed.TypedReference;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -113,7 +113,7 @@ public class CoreVaultTest {
                 return s;
             }
 
-            public RepositoryReference typed()
+            public TypedReference typed()
             {
                 return null; 
             }
