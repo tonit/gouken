@@ -16,7 +16,7 @@
     <version>0.1.0-SNAPSHOT</version>
     <name>gouken - Agent Simple</name>
 
-    <description>Tinybundles powered simple agent.</description>
+    <description>Self provisioning MA leveraging Tinybundles.</description>
 
     <dependencies>
         <dependency>
