@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.it;import org.junit.Test;/** * */public class SimpleWorkflowTest {        @Test    public void testSimpleWorkflowTest()    {    }}

@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.kernel;/** * Created by IntelliJ IDEA. * User: tonit * Date: 2/7/11 * Time: 6:33 PM * To change this template use File | Settings | File Templates. */public class FullCoreVaultTest {}

@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.simpleagent.service;/** *  */public class MyPushImpl {}

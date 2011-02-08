@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.
- * Beyond this, we should not have the notion of osgi other than DeploymentPackages. (also with another name as we probably just want a subset of that spec).
+ * Beyond this, we should not have the notion of osgi other than DeploymentPackages. (also with another untyped as we probably just want a subset of that spec).
  * <p/>
  * This Vault uses an OSGi Core R 4.2+ compatible OSGi implementation
  * <p/> *
@@ -114,7 +114,9 @@ public class CoreVault<PUSHTYPE> implements Vault<PUSHTYPE> {
 
         // create a dynamic proxy for T that looks T up on demand and invokes stuff on it.
         if( m_framework == null ) {
-            return (PUSHTYPE) new Object();
+            throw new KernelWorkflowException( "No framework installed." );
+
+            //return (PUSHTYPE) new Object();
         }
         return createProxyService();
     }

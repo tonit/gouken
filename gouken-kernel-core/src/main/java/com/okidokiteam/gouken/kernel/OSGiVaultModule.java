@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.kernel;import com.google.inject.AbstractModule;import com.google.inject.Provides;import com.google.inject.TypeLiteral;import com.okidokiteam.gouken.Vault;/** * */public class OSGiVaultModule extends AbstractModule {    @Override    protected void configure()    {       // bind( new TypeLiteral<Vault>() {} )           }}

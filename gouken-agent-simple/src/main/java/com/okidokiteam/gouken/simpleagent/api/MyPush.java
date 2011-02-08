@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.simpleagent.api;/** * */public interface MyPush {    String say( String s );}

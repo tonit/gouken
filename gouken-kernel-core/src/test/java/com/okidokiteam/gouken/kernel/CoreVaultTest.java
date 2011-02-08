@@ -35,10 +35,10 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.service.wireadmin.WireAdmin;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Provider;
 import org.ops4j.pax.repository.RepositoryException;
+import org.ops4j.pax.repository.typed.RepositoryReference;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
@@ -91,16 +91,12 @@ public class CoreVaultTest {
     {
         // we know that the ace agent also includes DeploymentAdmin. For that reason we can use it here as a test service:
         GoukenResolver resolver = mock( GoukenResolver.class );
-
-        when( resolver.find( Matchers.<ArtifactReference>any() ) ).thenReturn( getExampleResource() );
+        ManagementAgent agent = mock( ManagementAgent.class );
+        when( agent.getRuntimeParts() ).thenReturn( new ArtifactReference[]{ } );
 
         // learn from Guice TypeLiteral how to suck out generic type information.
         // then we can leave out the last parameter.
         Vault<PackageAdmin> coreVault = makeVault( resolver, getSettings(), PackageAdmin.class );
-
-        ManagementAgent agent = mock( ManagementAgent.class );
-        when( agent.getRuntimeParts() ).thenReturn( new ArtifactReference[]{ } );
-
         PackageAdmin push = coreVault.start( agent );
 
         // Should work
@@ -112,9 +108,14 @@ public class CoreVaultTest {
     {
         return new ArtifactReference() {
 
-            public String name()
+            public String untyped()
             {
                 return s;
+            }
+
+            public RepositoryReference typed()
+            {
+                return null; 
             }
         };
     }

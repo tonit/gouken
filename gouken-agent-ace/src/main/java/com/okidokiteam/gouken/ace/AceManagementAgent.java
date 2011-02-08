@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.okidokiteam.gouken.ArtifactReference;
 import com.okidokiteam.gouken.ManagementAgent;
+import com.okidokiteam.gouken.def.UntypedArtifactReference;
 import org.ops4j.pax.repository.RepositoryException;
 
 /**
@@ -61,21 +62,6 @@ public class AceManagementAgent implements ManagementAgent {
 
     private ArtifactReference newArtifact( String line )
     {
-        return new DefaultRuntimeArtifact( line );
-    }
-
-    private class DefaultRuntimeArtifact implements ArtifactReference {
-
-        private final String m_name;
-
-        public DefaultRuntimeArtifact( String line )
-        {
-            m_name = line;
-        }
-
-        public String name()
-        {
-            return m_name;
-        }
+        return new UntypedArtifactReference( line );
     }
 }
