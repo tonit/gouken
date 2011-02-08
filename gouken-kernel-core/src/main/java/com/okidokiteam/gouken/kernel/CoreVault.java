@@ -76,12 +76,6 @@ public class CoreVault<PUSHTYPE> implements Vault<PUSHTYPE> {
         m_pushServiceType = pushService;
     }
 
-    @Inject
-    public CoreVault( GoukenResolver resolver, VaultSettings settings )
-    {
-        this( resolver, settings, null );
-    }
-
     public PUSHTYPE start( ManagementAgent agent )
         throws KernelWorkflowException, KernelException
     {
