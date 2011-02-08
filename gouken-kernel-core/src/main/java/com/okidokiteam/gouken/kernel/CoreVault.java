@@ -20,30 +20,29 @@ package com.okidokiteam.gouken.kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.inject.Inject;
-import com.okidokiteam.gouken.*;
+import com.okidokiteam.gouken.ArtifactReference;
+import com.okidokiteam.gouken.GoukenResolver;
+import com.okidokiteam.gouken.KernelException;
+import com.okidokiteam.gouken.KernelWorkflowException;
+import com.okidokiteam.gouken.ManagementAgent;
+import com.okidokiteam.gouken.Vault;
+import com.okidokiteam.gouken.VaultSettings;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.ops4j.pax.repository.RepositoryException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.repository.RepositoryException;
 
 /**
  * This Vault actually knows about OSGi, it actually boots a fw, provisions it and manages its lifecycle.

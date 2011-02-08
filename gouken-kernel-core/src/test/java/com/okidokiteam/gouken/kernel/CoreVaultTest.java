@@ -33,7 +33,6 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.repository.Provider;
@@ -74,15 +73,15 @@ public class CoreVaultTest {
 
         when( resolver.find( Matchers.<ArtifactReference>any() ) ).thenReturn( getExampleResource() );
 
-        Vault<DeploymentAdmin> vault = makeVault( resolver, getSettings(), DeploymentAdmin.class );
+        Vault<MockService> vault = makeVault( resolver, getSettings(), MockService.class );
 
         ManagementAgent agent = mock( ManagementAgent.class );
         when( agent.getRuntimeParts() ).thenReturn( new ArtifactReference[]{ reference( "" ) } );
 
-        DeploymentAdmin push = vault.start( agent );
+        MockService push = vault.start( agent );
 
         // will not work, must timeout.
-        push.listDeploymentPackages();
+        push.toString();
     }
 
     @Test

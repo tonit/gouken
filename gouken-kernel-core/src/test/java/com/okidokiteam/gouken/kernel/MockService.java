@@ -1,0 +1,1 @@
+package com.okidokiteam.gouken.kernel;/** * Dummy being used to have a service in tests that does not really exist inside the vault. */public interface MockService {}

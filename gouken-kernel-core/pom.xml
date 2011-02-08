@@ -29,26 +29,13 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.6.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.dependencymanager</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>4.2.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-lang</artifactId>
-            <version>1.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-io</artifactId>
-            <version>1.2.2</version>
-        </dependency>
+        <!-- Used for locating the OSGi R4.2 Factory in classpath -->
         <dependency>
             <groupId>commons-discovery</groupId>
             <artifactId>commons-discovery</artifactId>
@@ -75,29 +62,6 @@
             <artifactId>javax.inject</artifactId>
         </dependency>
         -->
-
-        <!-- Test Resources -->
-        <dependency>
-            <groupId>org.ops4j.pax.repository</groupId>
-            <artifactId>pax-repository-maven-api</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.repository</groupId>
-            <artifactId>pax-repository-aether</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.okidokiteam.gouken</groupId>
-            <artifactId>gouken-agent-ace</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
