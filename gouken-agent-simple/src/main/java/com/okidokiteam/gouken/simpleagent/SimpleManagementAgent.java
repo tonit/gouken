@@ -120,7 +120,7 @@ public class SimpleManagementAgent implements ManagementAgent {
      * You will get the handle.
      *
      * @return Handle of a materialized bundle created on the fly. Use {@link Store} to get the actual bundle stream.
-     * @throws org.ops4j.pax.repository.RepositoryException in case putting the bundle to disk fails.
+     * @throws RepositoryException in case putting the bundle to disk fails.
      */
     private Handle bakeBundle()
         throws RepositoryException
