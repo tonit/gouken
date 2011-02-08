@@ -1,1 +1,1 @@
-package com.okidokiteam.gouken.it;import org.junit.Test;/** * */public class SimpleWorkflowTest {        @Test    public void testSimpleWorkflowTest()    {    }}
+package com.okidokiteam.gouken.it;import org.junit.Test;/** * This is about how it all fits together using raw corevault (and not one of the assemblies) * * Steps: * - Create a Guice Injector wiring up all the Modules * - get the vault and launch. */public class SimpleWorkflowTest {    @Test    public void testSimpleWorkflowTest()    {    }}
