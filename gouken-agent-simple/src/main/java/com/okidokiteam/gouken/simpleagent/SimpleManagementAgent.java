@@ -5,6 +5,7 @@ import java.io.InputStream;
 import javax.inject.Inject;
 import com.okidokiteam.gouken.ArtifactReference;
 import com.okidokiteam.gouken.ManagementAgent;
+import com.okidokiteam.gouken.def.TypedArtifactReference;
 import com.okidokiteam.gouken.def.UntypedArtifactReference;
 import com.okidokiteam.gouken.simpleagent.api.MyPush;
 import com.okidokiteam.gouken.simpleagent.service.MyPushImpl;
@@ -67,20 +68,21 @@ public class SimpleManagementAgent implements ManagementAgent {
 
     {
         try {
-            m_target.set(
-                SIMPLEAGENT, m_store.store(
-                newBundle()
-                    .add( MyPush.class )
-                    .add( MyPushImpl.class )
-                    .set( "Export-Package", MyPush.class.getPackage().getName() )
-                    .build( withBnd() )
-            )
+            return new TypedArtifactReference(
+                m_target.set(
+                    SIMPLEAGENT, m_store.store(
+                    newBundle()
+                        .add( MyPush.class )
+                        .add( MyPushImpl.class )
+                        .set( "Export-Package", MyPush.class.getPackage().getName() )
+                        .build( withBnd() )
+                )
+                )
             );
 
         } catch( IOException e ) {
             throw new RepositoryException( "Baking the bundle failed", e );
         }
-        return null;
     }
 
 
