@@ -83,8 +83,8 @@ public class SimpleManagementAgent implements ManagementAgent {
          */
         return new ArtifactReference[]{
             makeReference( SIMPLEAGENT, bakeBundle() ), // typed !
-            makeReference( "org.apache.felix.dm" ), // untyped
-            makeReference( "org.osgi.compendium" ) // untyped
+            //makeReference( "org:apache.felix:org.apache.felix.dm" ), // untyped
+            //makeReference( "org.apache.felix:org.osgi.compendium" ) // untyped
         };
     }
 
