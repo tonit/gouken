@@ -59,7 +59,7 @@
         </dependency>
         <!-- THE BUNDLE BAKERY-->
         <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
+            <groupId>org.ops4j.pax.tinybundles</groupId>
             <artifactId>pax-tinybundles-core</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

@@ -33,7 +33,7 @@ import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 
 import static com.okidokiteam.gouken.simpleagent.SimpleAgentReference.*;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.*;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
 
 /**
  * Example of an MA implementation that uses external references (bundles) as well as a

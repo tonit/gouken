@@ -5,6 +5,7 @@
         <groupId>com.okidokiteam.gouken</groupId>
         <artifactId>gouken-pom</artifactId>
         <version>0.1.0-SNAPSHOT</version>
+		<relativePath>../pom</relativePath>
     </parent>
 
     <groupId>com.okidokiteam.gouken</groupId>
@@ -14,6 +15,10 @@
     <name>gouken - API</name>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.ops4j.pax.repository</groupId>
             <artifactId>pax-repository-api</artifactId>
