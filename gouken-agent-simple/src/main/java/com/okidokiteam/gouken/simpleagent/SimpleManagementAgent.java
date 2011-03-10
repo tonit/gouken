@@ -127,11 +127,11 @@ public class SimpleManagementAgent implements ManagementAgent {
     {
         try {
             return m_store.store(
-                newBundle()
+                bundle( withBnd())
                     .add( MyPush.class )
                     .add( MyPushImpl.class )
                     .set( "Export-Package", MyPush.class.getPackage().getName() )
-                    .build( withBnd() )
+                    .build( )
             );
         } catch( IOException e ) {
             throw new RepositoryException( "Baking the bundle failed", e );
